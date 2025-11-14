@@ -63,11 +63,12 @@ h1 {
 main {
   display: flex;
   flex: 1;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .controls {
-  width: 650px;
+  flex: 0 0 650px;
   padding: 1rem;
   overflow-y: auto;
   background-color: #2F2A20;
@@ -76,9 +77,9 @@ main {
 }
 
 .output {
-  flex: 1;
+  flex: 1 0 auto;
   padding: 2rem;
-  overflow: auto;
+  overflow-y: auto;
   background-color: #4A443A;
 }
 

@@ -858,7 +858,7 @@
         "optional_end": "",
         "optional_start": "(d) (f)", 
         "start": "(c3) ",
-        "default": "(h) (hr hr hr) (ir1) (gxgr) (g) (hr1) (fr) (f.) (::)",
+        "default": "(h) (hr hr hr) (ir1) (gxgr) (gxg) (hr1) (fr) (f.) (::)",
         "patterns": [
             {
                 "symbol": "*",
@@ -870,7 +870,7 @@
             },
             {
                 "symbol": "\n",
-                "gabc": "(h) (hr hr hr) (ir1) (gxgr) (g) (hr1) (fr) (f.) (::)"
+                "gabc": "(h) (hr hr hr) (ir1) (gxgr) (gxg) (hr1) (fr) (f.) (::)"
             }   
         ],
         "find": [],
@@ -1233,7 +1233,7 @@
         "optional_end": "",
         "optional_start": "(h) (h)",
         "start": "(c4)",
-        "default": "(h) (hr hr hr) (ixir1) (gr) (g.) (ixir1) (ir) (h.) (::)",
+        "default": "(h) (hr hr hr) (ixir1) (gr) (g.) (ixir1) (ixir) (h.) (::)",
         "patterns": [
             {
                 "symbol": "*",
@@ -1245,7 +1245,7 @@
             },
             {
                 "symbol": "\n",
-                "gabc": "(h) (hr hr hr) (ixir1) (gr) (g.) (ixir1) (ir) (h.) (::)"
+                "gabc": "(h) (hr hr hr) (ixir1) (gr) (g.) (ixir1) (ixir) (h.) (::)"
             }
         ],
         "find": [],

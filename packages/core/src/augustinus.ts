@@ -58,6 +58,7 @@ function psalmLogic(input: string[], notes: string[]) { //Função que aplica a 
 };
 
 function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision?: boolean): string {
+    lyrics = lyrics.normalize("NFC");
     const unstressedMonosyllables: string[] = ["a", "e", "o", "as", "os", "um", "uns", "de", "do", "da", "dos", "das", "em", "no", "na", "nos", "nas", "que", "me", "te", "se", "lhe", "lhes", "com", "por", "sem", "seu", "seus", "meu", "meus", "teu", "teus", "eu", "tu", "mas", "ou", "sou", "foi", "ao", "aos", "pois", "diz"];
     const taggedParts: string[] = [];
     const placeholder = "||TAGGED_PART||";
@@ -162,7 +163,7 @@ function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision
         gabcOutputArray = gabcOutputArray.map(syllable => syllable.replace(/#|(?<=\()'/g, ""));
 
         // Junta o array com o GABC numa string e adiciona a pausa no final
-        gabcOutputArray.push(pause);
+        gabcOutputArray.push(" " + pause);
         gabcOutput = gabcOutputArray.join("");
         }
         gabcOutput = gabcOutput.replaceAll("#", "");
