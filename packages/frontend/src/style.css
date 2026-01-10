@@ -39,21 +39,6 @@ label {
   height: 100vh;
 }
 
-header {
-  display: flex;
-  align-items: center;
-  background: #4A443A;
-  padding: 1rem;
-  border-bottom: 1px solid #9B5B4D;
-}
-
-header .logo {
-  height: 50px;
-  width: auto;
-  margin-right: 1rem;
-  border-radius: 50%;
-}
-
 h1 {
   margin: 0;
   font-size: 1.5rem;
@@ -201,4 +186,35 @@ summary {
     padding: 0;
     box-shadow: none;
   }
+}
+
+header {
+  display: flex;
+  align-items: center;
+  background: #4A443A;
+  padding: 1rem;
+  border-bottom: 1px solid #9B5B4D;
+  justify-content: space-between; /* Espalha os grupos para os cantos */
+}
+
+header .logo {
+  height: 50px;
+  width: auto;
+  margin-right: 1rem;
+  border-radius: 50%;
+}
+
+.left-content {
+    display: flex;
+    align-items: center;
+}
+
+#docs a {
+    color: #F5F0E1;
+    text-decoration: none;
+}
+
+#docs a:hover {
+    color: #d6d2c5;
+    text-decoration: underline;
 }

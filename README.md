@@ -4,6 +4,10 @@
 
 Este projeto é um monorepo que contém a lógica principal, uma interface de linha de comando (CLI) e um frontend baseado na web.
 
+Acesse a documentação e guia de uso [aqui](docs/index.md)
+
+Acesse a interface do programa aqui: [augustinus.liturgiacantada.com.br](https://augustinus.liturgiacantada.com.br)
+
 ## Funcionalidades
 
 *   **Geração de GABC:** Converte texto em notação GABC com base em modelos predefinidos ou personalizados.
@@ -29,7 +33,13 @@ Uma interface web amigável para o Augustinus. Permite que você insira texto, s
 
 ## Começando
 
-Para começar a usar o Augustinus, você precisará ter o [Bun](https://bun.sh/) instalado.
+### Uso comum
+
+Acesse a interface do programa aqui: [augustinus.liturgiacantada.com.br](https://augustinus.liturgiacantada.com.br)
+
+### Desenvolvimento / CLI
+
+Para começar a desenvolver o Augustinus, você precisará ter o [Bun](https://bun.sh/) instalado.
 
 1.  **Clone o repositório:**
 
