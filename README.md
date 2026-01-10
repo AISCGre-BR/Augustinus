@@ -4,7 +4,7 @@
 
 Este projeto é um monorepo que contém a lógica principal, uma interface de linha de comando (CLI) e um frontend baseado na web.
 
-Acesse a documentação e guia de uso [aqui](docs/index.md)
+Acesse a documentação e guia de uso [aqui](docs/)
 
 Acesse a interface do programa aqui: [augustinus.liturgiacantada.com.br](https://augustinus.liturgiacantada.com.br)
 
