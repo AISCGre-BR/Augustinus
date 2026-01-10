@@ -2,15 +2,14 @@
 
 **Augustinus** é uma ferramenta poderosa para gerar notação de canto gregoriano no formato `.gabc`. Ele recebe texto e um modelo como entrada e produz um arquivo GABC contendo a partitura gregoriana completa.
 
-Este projeto é um monorepo que contém a lógica principal, uma interface de linha de comando (CLI), um frontend baseado na web e uma API REST.
+Este projeto é um monorepo que contém a lógica principal, uma interface de linha de comando (CLI) e um frontend baseado na web.
 
 ## Funcionalidades
 
 *   **Geração de GABC:** Converte texto em notação GABC com base em modelos predefinidos ou personalizados.
 *   **Separação de Sílabas:** Posiciona corretamente as notas nas sílabas usando a biblioteca `separador-silabas`.
-*   **Múltiplas Interfaces:** Use-o através da web, CLI ou API.
+*   **Múltiplas Interfaces:** Use-o através da web, CLI.
 *   **Modelos Personalizáveis:** Defina seus próprios modelos musicais em formato JSON.
-*   **API Dockerizada:** Implante facilmente a API usando o Docker.
 
 ## Pacotes
 
@@ -27,10 +26,6 @@ Uma interface de linha de comando para usar a funcionalidade de geração de GAB
 ### `@augustinus/frontend`
 
 Uma interface web amigável para o Augustinus. Permite que você insira texto, selecione um modelo e veja o GABC gerado e sua renderização SVG em tempo real.
-
-### `@augustinus/api`
-
-Uma API RESTful construída com Express que expõe a funcionalidade de geração de GABC por HTTP.
 
 ## Começando
 
@@ -84,46 +79,7 @@ bun run start:cli -- -t "Seu texto aqui" -m "Oração tom solene"
 *   `--separator`: Separador entre frases.
 *   `--removeSeparator`: Se for falso, o caractere separador será usado para unir as linhas GABC.
 
-### API
 
-A API permite que você integre o Augustinus com seus próprios aplicativos.
-
-**Inicie o servidor da API:**
-
-```bash
-bun run start:api
-```
-
-O servidor será iniciado em `http://localhost:3000`.
-
-**Gerar GABC via API:**
-
-```bash
-curl -X POST -H "Content-Type: application/json" -d '{
-  "text": "Seu texto aqui",
-  "modelName": "Oração tom solene"
-}' http://localhost:3000/generate
-```
-
-## Docker
-
-O pacote da API inclui um `Dockerfile` para fácil conteinerização.
-
-**Construa a imagem do Docker:**
-
-Na raiz do projeto, execute:
-
-```bash
-docker build -f packages/api/Dockerfile . -t augustinus-api
-```
-
-**Execute o container do Docker:**
-
-```bash
-docker run -p 3000:3000 augustinus-api
-```
-
-A API estará acessível em `http://localhost:3000`.
 
 ## Contribuindo
 
