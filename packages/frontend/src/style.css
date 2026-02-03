@@ -208,7 +208,9 @@ header .logo {
     display: flex;
     align-items: center;
 }
-
+#docs {
+  margin-left:10%;
+}
 #docs a {
     color: #F5F0E1;
     text-decoration: none;
