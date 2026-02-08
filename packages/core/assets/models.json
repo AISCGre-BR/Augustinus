@@ -1,5 +1,30 @@
 [
     {
+        "name": "Paixao Tonus I",
+        "type": "paixao",
+        "tom": "I",
+        "optional_end": "",
+        "optional_start": "",
+        "start": "",
+        "default": "(g) (gr gr gr) (g) (:)",
+        "patterns": [
+            {
+                "symbol": "#",
+                "gabc": "(j) (jr jr jr) (j) (:Z)"
+            },
+            {
+                "symbol": "$",
+                "gabc": "(k) (kr kr kr) (k) (:Z)"
+            },
+            {
+                "symbol": "+",
+                "gabc": "(f) (fr fr fr) (f) (:Z)"
+            }
+        ],
+        "find": [],
+        "replace": []
+    },
+    {
         "name": "Oração tom solene",
         "type": "oracao",
         "tom": "solene",
