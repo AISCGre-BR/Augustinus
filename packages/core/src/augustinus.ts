@@ -114,10 +114,14 @@ function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision
 
             if (isSyllableElidable && isNextSyllableElidable) {
                 //elisão elision
-                gabcOutputArray[i] = currentSyllable.replace(/@/g, "") + "_" + nextSyllable;
+                gabcOutputArray[i] = currentSyllable.replace(/@/g, "") + "~" + nextSyllable;
                 gabcOutputArray.splice(i + 1, 1);
-                i--;
+                // i--;
+                console.log(gabcOutputArray[i]);
+                gabcOutputArray[i] = gabcOutputArray[i].replaceAll(/([aeiou])~ (#)?([aeiou])/g,"{$1~$3}");
+                console.log(gabcOutputArray[i]);
             }
+
         }
     }
 
