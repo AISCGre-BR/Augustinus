@@ -103,6 +103,23 @@ function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision
     
     gabcOutput += wordsWithNotePlaceholders.join(" ");
     let gabcOutputArray: string[] = gabcOutput.split(/(?<=@)/);
+    console.log(gabcOutputArray);
+    for (let i = 0; i < gabcOutputArray.length; i++) {
+        const currentSyllable = gabcOutputArray[i] || "";
+        const nextSyllable = gabcOutputArray[i + 1] || "";
+
+        if (currentSyllable.includes('_')) {
+            console.log(gabcOutputArray[i]);
+            gabcOutputArray[i] = currentSyllable.replace(/[@_]/g, "") + "~" + nextSyllable;
+            gabcOutputArray.splice(i + 1, 1);
+            console.log(gabcOutputArray[i]);
+            gabcOutputArray[i] = gabcOutputArray[i].replaceAll(/([aeiou](?:\s*~\s*#?\s*[aeiou])+)(?!_)/gi, (match) => {
+                return `{${match.replace(/\s+/g, "")}}`;
+            });
+            console.log(gabcOutputArray[i]);
+            i--;
+        }
+    }
 
     if (doElision) {
         for (let i = 0; i < gabcOutputArray.length; i++) {
