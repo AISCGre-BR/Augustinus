@@ -87,7 +87,7 @@ function handlePsalmOptions() {
 
 function gabcToSvg(gabc: string) {
   
-  gabc = gabc.replaceAll(/\{<v>\\itie{([aeiou])\s([aeiou])}<\/v>\}/gi, '{$1_$2}');
+  gabc = gabc.replaceAll(/\{([aeiou])~([aeiou]\})/gi, '{$1_$2}');
 
   if (renderer === null) {
     renderer = new GregorianChantSVGRenderer(chantContainer);
