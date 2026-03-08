@@ -1,5 +1,4 @@
 import { syllable, tonic } from "separador-silabas";
-//import defaultModels from '../assets/psalm_models.json' assert {type: "json"};
 import defaultModels from '../assets/models.json' with { type: 'json' };
 
 function replaceFromEnd(input: string, find: string, replaceWith: string, limit?: number): string {
@@ -61,7 +60,7 @@ function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision
     lyrics = lyrics.normalize("NFC");
     const unstressedMonosyllables: string[] = ["a", "e", "o", "as", "os", "um", "uns", "de", "do", "da", "dos", "das", "em", "no", "na", "nos", "nas", "que", "me", "te", "se", "lhe", "lhes", "com", "por", "sem", "seu", "seus", "meu", "meus", "teu", "teus", "eu", "tu", "mas", "ou", "sou", "foi", "ao", "aos", "pois", "diz"];
     const taggedParts: string[] = [];
-    const placeholder = "||TAGGED_PART||";
+    const placeholder = "||TAGGEDPART||";
 
     let deTaggedLyrics = lyrics.replace(/(<[^>]+>.*?<\/[^>]+>)/g, (match) => {
         taggedParts.push(match);
@@ -142,6 +141,7 @@ function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision
             return `{${match.replace(/\s+/g, "")}}`;
         }
     ));
+    gabcOutput = gabcOutputArray.join("");
 
     if (isDynamic && lastWordForTonic) {
         if (psalm) {
@@ -205,8 +205,8 @@ function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision
         if (!psalm) {
             switch (tonicNumber) {
                 case 1:
-                    const joined_note: string = ((notes[0 + offset] || "").slice(0, -1) + (notes[2 + offset] || "").substring(1)).replaceAll(/([a-m])\1/g, "$1");
-                    gabcOutput = replaceFromEnd(gabcOutput, "@", joined_note, 1);
+                    const joinedNote: string = ((notes[0 + offset] || "").slice(0, -1) + (notes[2 + offset] || "").substring(1)).replaceAll(/([a-m])\1/g, "$1");
+                    gabcOutput = replaceFromEnd(gabcOutput, "@", joinedNote, 1);
                     break;
                 case 2:
                     gabcOutput = replaceFromEnd(gabcOutput, "@", notes[2 + offset] || "", 1);
@@ -253,8 +253,8 @@ export interface Model {
     name: string;
     type: string;
     tom: string;
-    optional_end: string;
-    optional_start: string;
+    optionalEnd: string;
+    optionalStart: string;
     start: string;
     default: string;
     patterns: Pattern[];
@@ -288,12 +288,12 @@ export default function generateGabc(input: string, modelObject: Model, paramete
         if (model.tom === 'simples') {
             const note = parametersObject.customNote || 'h';
             const clef = parametersObject.customClef || 'c4';
-            model.start, model.optional_start = "(" + clef + ") ";
+            model.start, model.optionalStart = "(" + clef + ") ";
             model.default = "(" + note + ") (" + note + "r " + note + "r " + note + "r" + ")";
         } else if (model.tom === 'solene') {
             model.default = parametersObject.customPattern || '';
             model.start = parametersObject.customStart || '';
-            model.optional_start = parametersObject.customStart || '';
+            model.optionalStart = parametersObject.customStart || '';
         }
     }
 
@@ -303,13 +303,13 @@ export default function generateGabc(input: string, modelObject: Model, paramete
     if (parametersObject.removeParenthesis) {
         input = input.replace(/\(.*\)/g, "");
     }
-    let regex_endings: string = "([\\" + parametersObject.separator;
+    let regexEndings: string = "([\\" + parametersObject.separator;
     for (let i = 0; i < modelObject.patterns.length; i++) {
         const symbol: string = modelObject.patterns[i].symbol;
         input = input.replaceAll(symbol, symbol + parametersObject.separator);
-        regex_endings += "\\" + symbol;
+        regexEndings += "\\" + symbol;
     }
-    regex_endings += "]+)\\" + parametersObject.separator;
+    regexEndings += "]+)\\" + parametersObject.separator;
     if (modelObject.type === "prefacio" && modelObject.tom === "solene") {
         input = input.replaceAll("Por isso,", "Por isso," + parametersObject.separator);
     }
@@ -342,7 +342,7 @@ export default function generateGabc(input: string, modelObject: Model, paramete
         }
     }
     if (psalm) {
-        const intonnationNotes = model.optional_start.trim().split(" ").filter(n => n);
+        const intonnationNotes = model.optionalStart.trim().split(" ").filter(n => n);
         let versicles = [];
         let hemistich = [];
         let stanzaIndex = 1;
@@ -394,9 +394,9 @@ export default function generateGabc(input: string, modelObject: Model, paramete
     }
     let resultGabc = "";
     if (parametersObject.addOptionalStart && !psalm) {
-        resultGabc = [model.optional_start, ...gabcLines].join("\n");
+        resultGabc = [model.optionalStart, ...gabcLines].join("\n");
         if (parametersObject.addOptionalEnd) {
-            resultGabc += "\n" + model.optional_end;
+            resultGabc += "\n" + model.optionalEnd;
         }
     } else {
         if (gabcLines.length > 0) {
