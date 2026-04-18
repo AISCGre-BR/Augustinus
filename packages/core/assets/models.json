@@ -142,7 +142,7 @@
             },
             {
                 "symbol": "+",
-                "gabc": "(f) (gr gr gr) (hr1) (gr) (g) (,)"
+                "gabc": "(f) (gr gr gr) (g) (f) (g) (hr1) (gr) (g) (,)"
             }
         ],
         "find": [],
