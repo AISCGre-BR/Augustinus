@@ -11,6 +11,6 @@
     "build": "tsc"
   },
   "dependencies": {
-    "separador-silabas": "^2.3.0"
+    "separador-silabas": "^2.4.1"
   }
 }

@@ -17,6 +17,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "separador-silabas": "^2.4.1",
     "vite": "^7.1.9"
   }
 }
