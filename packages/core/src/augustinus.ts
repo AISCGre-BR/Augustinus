@@ -395,6 +395,10 @@ export default function generateGabc(input: string, modelObject: Model, paramete
     let resultGabc = "";
     if (parametersObject.addOptionalStart && !psalm) {
         resultGabc = [model.optionalStart, ...gabcLines].join("\n");
+        // Add an exception: Add (::) to the end, then replace (:) (::) with (::)
+        resultGabc += "(::)";
+        resultGabc = resultGabc.replaceAll("(:)(::)", "(::)");
+
         if (parametersObject.addOptionalEnd) {
             resultGabc += "\n" + model.optionalEnd;
         }
@@ -408,6 +412,10 @@ export default function generateGabc(input: string, modelObject: Model, paramete
     if (parametersObject.header) {
         resultGabc = parametersObject.header + "\n%%\n" + resultGabc;
     }
+    // fix temporary use cases
+    resultGabc = resultGabc.replaceAll(";.", ";");
+    resultGabc = resultGabc.replaceAll(":.", ";");
+    
     return resultGabc;
 }
 
