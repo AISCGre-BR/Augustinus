@@ -414,8 +414,8 @@ export default function generateGabc(input: string, modelObject: Model, paramete
     }
     // fix temporary use cases
     resultGabc = resultGabc.replaceAll(";.", ";");
-    resultGabc = resultGabc.replaceAll(":.", ";");
-    
+    resultGabc = resultGabc.replaceAll(":.", ":");
+
     return resultGabc;
 }
 
