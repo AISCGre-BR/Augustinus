@@ -11,6 +11,7 @@ const psalmSelect = document.getElementById('psalm') as HTMLSelectElement;
 const repeatIntonationCheckbox = document.getElementById('repeatIntonation') as HTMLInputElement;
 const separateStanzasCheckbox = document.getElementById('separateStanzas') as HTMLInputElement;
 const doElisionCheckbox = document.getElementById('doElision') as HTMLInputElement;
+const quelismaCheckbox = document.getElementById('quelisma') as HTMLInputElement;
 const separatorInput = document.getElementById('separator') as HTMLInputElement;
 const addOptionalStartCheckbox = document.getElementById('addOptionalStart') as HTMLInputElement;
 const addOptionalEndCheckbox = document.getElementById('addOptionalEnd') as HTMLInputElement;
@@ -140,6 +141,7 @@ function generate() {
     customPattern: customPatternTextArea.value,
     customStart: customStartInput.value,
     header: metadataTextArea.value,
+    quelisma: quelismaCheckbox.checked,
   };
 
   const gabc = generateGabc(inputText, selectedModel, parameters);

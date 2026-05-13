@@ -25,7 +25,7 @@ function psalmLogic(input: string[], notes: string[]) { //Função que aplica a 
     const i = input.length;
     let tonicNote = notes.filter(note => note.includes("r1")).reverse().map(note => note.replace("r1", "")); // Procura pela nota da tônica melódica
     const replaceAt = (index: number, value: string) => { input[index] = input[index].replace("@", value) }; // Função menor, parecida com a replaceFromEnd, mas para array
-    const isTonic = (index: number): boolean => input[index]?.includes("#") ?? false; // Função que será usada mais tarde
+    // const isTonic = (index: number): boolean => input[index]?.includes("#") ?? false; // Função que será usada mais tarde
     const tonicIndex = i - input.findLastIndex(syllable => syllable.includes("#")); // Procura pelo índice da primeira sílaba tônica de trás pra frente
     notes = notes.map(notes => notes.replace("r1", "").replace("r", "") || ""); // Limpa as marcações de acento das notas
     if (tonicNote.length > 0) {
@@ -277,6 +277,7 @@ export interface Parameters {
     customPattern?: string;
     customStart?: string;
     header?: string;
+    quelisma?: boolean;
 }
 
 export default function generateGabc(input: string, modelObject: Model, parametersObject: Parameters): string {
@@ -412,10 +413,18 @@ export default function generateGabc(input: string, modelObject: Model, paramete
     if (parametersObject.header) {
         resultGabc = parametersObject.header + "\n%%\n" + resultGabc;
     }
+    // if quelisma (experimental)
+    if (parametersObject.quelisma) {
+        resultGabc = resultGabc.replaceAll("can(g)tan(g)do(g) a(g) u(fe)ma(ef) só(g) voz:.(fgf) (::)", "can(g)tan(fgwh)do(g) a(g) u(fe)ma(ef) só(g) voz:(fgf) (::)")
+    }
+    
+    
     // fix temporary use cases
+    resultGabc = resultGabc.replaceAll(",.", ",");
     resultGabc = resultGabc.replaceAll(";.", ";");
     resultGabc = resultGabc.replaceAll(":.", ":");
-
+    resultGabc = resultGabc.replaceAll("?.", "?");
+    resultGabc = resultGabc.replaceAll("!.", "!");
     return resultGabc;
 }
 
