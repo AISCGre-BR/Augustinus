@@ -4,8 +4,8 @@
         "type": "oracao",
         "tom": "solene",
         "optionalEnd": "<c><sp>R/</sp>.</c> A(g) mém.(gh) (::)",
-        "optionalStart": "(c4) <c><sp>V/</sp>.</c> O(h)re(gh)mos.(h) (::)",
-        "start": "(c4) <c><sp>V/</sp>.</c> ",
+        "optionalStart": "(c4) <c><sp>V/</sp>.</c>() O(h)re(gh)mos.(h) (::)",
+        "start": "(c4) <c><sp>V/</sp>.</c>() ",
         "default": "(g) (hr hr hr) (g) (g) (hr1) (hr) (h) (::)",
         "patterns": [
             {
@@ -37,8 +37,8 @@
         "type": "oracao",
         "tom": "simples",
         "optionalEnd": "<c><sp>R/</sp>.</c> A(h) mém.(h) (::)",
-        "optionalStart": "(c3) <c><sp>V/</sp>.</c> O(h) re(h) mos:(f) (::)",
-        "start": "(c3) <c><sp>V/</sp>.</c> ",
+        "optionalStart": "(c3) <c><sp>V/</sp>.</c>() O(h) re(h) mos:(f) (::)",
+        "start": "(c3) <c><sp>V/</sp>.</c>() ",
         "default": "(h) (hr hr hr) (hr1) (dr) (d) (:)",
         "patterns": [
             {
@@ -74,8 +74,8 @@
         "type": "oracao",
         "tom": "simples",
         "optionalEnd": "<c><sp>R/</sp>.</c> A(h) mém.(h) (::)",
-        "optionalStart": "(c3) <c><sp>V/</sp>.</c> O(h) re(h) mos:(h) (::)",
-        "start": "(c3) <c><sp>V/</sp>.</c> ",
+        "optionalStart": "(c3) <c><sp>V/</sp>.</c>() O(h) re(h) mos:(h) (::)",
+        "start": "(c3) <c><sp>V/</sp>.</c>() ",
         "default": "(h) (hr hr hr) (hr1) (hr) (h) (:)",
         "patterns": [
             {
@@ -132,8 +132,8 @@
         "type": "prefacio",
         "tom": "solene",
         "optionalEnd": "",
-        "optionalStart": "(c3) <c><sp>V/</sp>.</c> O(e) Se(f)nhor(g) es(g)te(g)ja(e) con(f)vos(gf)co.(f) (::) <c><sp>R/</sp>.</c> E(e)l{e~e}s(f)tá(g) no(g) mei(g)o(e) de(f) nós(gf) (::Z) <c><sp>V/</sp>.</c> Co(f)ra(g)ções(h) ao(g) al(fg)to.(fe) (::) <c><sp>R/</sp>.</c> O(g) nos(g)so(g) co(f)ra(g)ção(h) es(g)tá(f) em(g) Deus.(fe) (::Z) <c><sp>V/</sp>.</c> De(gf)mos(e) gra(ef)ças(g) ao(f) Se(g)nhor(hg) nos(fe)so(fg) Deus.(fgf) (::) <c><sp>R/</sp>.</c> É(f) nos(f)so(f) de(g)ver(h) e(g) nos(g)sa(f) sal(g)va(f)ção.(fe) (::Z) ",
-        "start": "(c3) <c><sp>V/</sp>.</c> ",
+        "optionalStart": "(c3) <c><sp>V/</sp>.</c>() O(e) Se(f)nhor(g) es(g)te(g)ja(e) con(f)vos(gf)co.(f) (::) <c><sp>R/</sp>.</c> E(e)l{e~e}s(f)tá(g) no(g) mei(g)o(e) de(f) nós(gf) (::Z) <c><sp>V/</sp>.</c>() Co(f)ra(g)ções(h) ao(g) al(fg)to.(fe) (::) <c><sp>R/</sp>.</c> O(g) nos(g)so(g) co(f)ra(g)ção(h) es(g)tá(f) em(g) Deus.(fe) (::Z) <c><sp>V/</sp>.</c>() De(gf)mos(e) gra(ef)ças(g) ao(f) Se(g)nhor(hg) nos(fe)so(fg) Deus.(fgf) (::) <c><sp>R/</sp>.</c> É(f) nos(f)so(f) de(g)ver(h) e(g) nos(g)sa(f) sal(g)va(f)ção.(fe) (::Z) ",
+        "start": "(c3) <c><sp>V/</sp>.</c>() ",
         "default": "(g) (gr gr gr) (fe) (ef) (g) (fgr1) (fr) (f) (:)",
         "patterns": [
             {
@@ -153,8 +153,8 @@
         "type": "prefacio",
         "tom": "simples",
         "optionalEnd": "",
-        "optionalStart": "(c3) <c><sp>V/</sp>.</c> O(f) Se(g)nhor(h) es(h)te(h)ja(f) con(g)vos(h)co.(g) (::) <c><sp>R/</sp>.</c> E(f)l{e~e}s(g)tá(h) no(h) mei(h)o(f) de(g) nós(hg) (::Z) <c><sp>V/</sp>.</c> Co(g)ra(h)ções(i) ao(h) al(g)to.(g) (::) <c><sp>R/</sp>.</c> O(h) nos(h)so(h) co(g)ra(h)ção(i) es(h)tá(g) em(h) Deus.(gf) (::Z) <c><sp>V/</sp>.</c> De(ih)mos(g) gra(h)ças(h) ao(h) Se(h)nhor(h) nos(f)so(g) Deus.(hg) (::) <c><sp>R/</sp>.</c> É(g) nos( g)so(g) de(h)ver(i) e(h) nos(h)sa(g) sal(h)va(g)ção.(gf) (::Z)",
-        "start": "(c3) <c><sp>V/</sp>.</c> ",
+        "optionalStart": "(c3) <c><sp>V/</sp>.</c>() O(f) Se(g)nhor(h) es(h)te(h)ja(f) con(g)vos(h)co.(g) (::) <c><sp>R/</sp>.</c> E(f)l{e~e}s(g)tá(h) no(h) mei(h)o(f) de(g) nós(hg) (::Z) <c><sp>V/</sp>.</c>() Co(g)ra(h)ções(i) ao(h) al(g)to.(g) (::) <c><sp>R/</sp>.</c> O(h) nos(h)so(h) co(g)ra(h)ção(i) es(h)tá(g) em(h) Deus.(gf) (::Z) <c><sp>V/</sp>.</c>() De(ih)mos(g) gra(h)ças(h) ao(h) Se(h)nhor(h) nos(f)so(g) Deus.(hg) (::) <c><sp>R/</sp>.</c> É(g) nos( g)so(g) de(h)ver(i) e(h) nos(h)sa(g) sal(h)va(g)ção.(gf) (::Z)",
+        "start": "(c3) <c><sp>V/</sp>.</c>() ",
         "default": "(g) (gr gr gr) (e) (f) (gr1) (fr) (f) (:)",
         "patterns": [
             {
@@ -174,8 +174,8 @@
         "type": "bencao",
         "tom": "solene",
         "optionalEnd": "",
-        "optionalStart": "(c4) <c><sp>V/</sp>.</c> ",
-        "start": "(c4) <c><sp>V/</sp>.</c> ",
+        "optionalStart": "(c4) <c><sp>V/</sp>.</c>() ",
+        "start": "(c4) <c><sp>V/</sp>.</c>() ",
         "default": "(h) (hr hr hr) (g) (h) (hr1g) (gr) (g) (::)",
         "patterns": [
             {
@@ -229,8 +229,8 @@
         "name": "Evangelho tom A",
         "type": "leitura",
         "tom": "",
-        "optionalEnd": "<c><sp>V/</sp>.</c>Pa(h)la(h)vra(h) da(h) Sal(f)va(h)ção.(h) (::) <c><sp>R/</sp>.</c> Gló(h)ri(h){a~a}(h) vós,(f) Se(h)nhor.(h) (::Z)",
-        "optionalStart": "<c><sp>V/</sp>.</c> O(h) Se(h)nhor(h) es(h)te(h)ja(h) con(h)vos(h)co.(h) (::) <c><sp>R/</sp>.</c> E(h)le(h) es(h)tá(h) no(h) meio(h) de(h) nós.(h) (::Z)",
+        "optionalEnd": "<c><sp>V/</sp>.</c>()Pa(h)la(h)vra(h) da(h) Sal(f)va(h)ção.(h) (::) <c><sp>R/</sp>.</c> Gló(h)ri(h){a~a}(h) vós,(f) Se(h)nhor.(h) (::Z)",
+        "optionalStart": "<c><sp>V/</sp>.</c>() O(h) Se(h)nhor(h) es(h)te(h)ja(h) con(h)vos(h)co.(h) (::) <c><sp>R/</sp>.</c> E(h)le(h) es(h)tá(h) no(h) meio(h) de(h) nós.(h) (::Z)",
         "start": "(c4) ",
         "default": "(h) (hr hr hr) (f) (h) (h) (h) (:)",
         "patterns": [
@@ -282,8 +282,8 @@
         "type": "custom",
         "tom": "simples",
         "optionalEnd": "",
-        "optionalStart": "(c4) <c><sp>V/</sp>.</c>",
-        "start": "(c4) <c><sp>V/</sp>.</c>",
+        "optionalStart": "(c4) <c><sp>V/</sp>.</c>()",
+        "start": "(c4) <c><sp>V/</sp>.</c>()",
         "default": "(h) (hr hr hr) (::)",
         "patterns": [],
         "find": [],
@@ -294,8 +294,8 @@
         "type": "custom",
         "tom": "solene",
         "optionalEnd": "",
-        "optionalStart": "(c4) <c><sp>V/</sp>.</c>",
-        "start": "(c4) <c><sp>V/</sp>.</c>",
+        "optionalStart": "(c4) <c><sp>V/</sp>.</c>()",
+        "start": "(c4) <c><sp>V/</sp>.</c>()",
         "default": "(h) (hr hr hr) (::)",
         "patterns": [],
         "find": [],

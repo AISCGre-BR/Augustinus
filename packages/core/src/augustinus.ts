@@ -62,18 +62,28 @@ function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision
     const taggedParts: string[] = [];
     const placeholder = "||TAGGEDPART||";
 
-    let deTaggedLyrics = lyrics.replace(/(<[^>]+>.*?<\/[^>]+>)/g, (match) => {
+    let deTaggedLyrics = lyrics.replace(/(<[^>]+>)/g, (match) => {
         taggedParts.push(match);
         return placeholder;
     });
 
     let wordsWithNotePlaceholders: string[] = deTaggedLyrics.split(/\s+/).filter(w => w).map(word => {
-        if (word === placeholder) {
-            return taggedParts.shift() || "";
+        const processToken = (token: string) => {
+            if (token === placeholder) {
+                return taggedParts.shift() || "";
+            }
+            if (!/[a-zA-Z\u00C0-\u00FF]/i.test(token)) {
+                return token;
+            }
+            const syllableArray = syllable(token).split(/(?<=@)/);
+            const tonicIndex = syllableArray.length - tonic(syllableArray);
+            return syllableArray.map((s, i) => (i === tonicIndex && !unstressedMonosyllables.includes(s)) ? "#" + s : s).join("") + "@";
         }
-        const syllableArray = syllable(word).split(/(?<=@)/);
-        const tonicIndex = syllableArray.length - tonic(syllableArray);
-        return syllableArray.map((s, i) => (i === tonicIndex && !unstressedMonosyllables.includes(s)) ? "#" + s : s).join("") + "@";
+
+        if (word.includes(placeholder)) {
+            return word.split(/(\|\|TAGGEDPART\|\|)/).filter(t => t).map(processToken).join("");
+        }
+        return processToken(word);
     });
 
     let gabcOutput: string = "";
@@ -302,7 +312,10 @@ export default function generateGabc(input: string, modelObject: Model, paramete
         input = input.replace(/[0-9]/g, "");
     }
     if (parametersObject.removeParenthesis) {
-        input = input.replace(/\(.*\)/g, "");
+        input = input.replace(/\(.*?\)/g, "");
+    } else {
+        input = input.replaceAll("(", "<v>(</v>");
+        input = input.replaceAll(")", "<v>)</v>");
     }
     let regexEndings: string = "([\\" + parametersObject.separator;
     for (let i = 0; i < modelObject.patterns.length; i++) {
