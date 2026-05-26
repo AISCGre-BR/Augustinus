@@ -422,7 +422,7 @@ export default function generateGabc(input: string, modelObject: Model, paramete
         }
         resultGabc = gabcLines.join("\n");
     }
-    resultGabc = resultGabc.replaceAll(/'\(.\)/gm, "(,)");
+    resultGabc = resultGabc.replaceAll(/'(\([^)]+\))?/gm, "(,)");
     if (parametersObject.header) {
         resultGabc = parametersObject.header + "\n%%\n" + resultGabc;
     }
