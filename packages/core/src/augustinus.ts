@@ -312,7 +312,7 @@ export default function generateGabc(input: string, modelObject: Model, paramete
         input = input.replace(/[0-9]/g, "");
     }
     if (parametersObject.removeParenthesis) {
-        input = input.replace(/\(.*?\)/g, "");
+        input = input.replace(/\([\s\S]*?\)/g, "");
     } else {
         input = input.replaceAll("(", "<v>(</v>");
         input = input.replaceAll(")", "<v>)</v>");

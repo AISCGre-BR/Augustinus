@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 import generateGabc, { type Model, type Parameters } from "@augustinus/core";
 import { defaultModels } from "@augustinus/core"
 import yargs from 'yargs';
