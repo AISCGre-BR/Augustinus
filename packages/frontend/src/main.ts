@@ -13,6 +13,8 @@ const separateStanzasCheckbox = document.getElementById('separateStanzas') as HT
 const doElisionCheckbox = document.getElementById('doElision') as HTMLInputElement;
 const quelismaCheckbox = document.getElementById('quelisma') as HTMLInputElement;
 const includeBarredVParenthesisCheckbox = document.getElementById('includeBarredVParenthesis') as HTMLInputElement;
+const curlyDiphthongsCheckbox = document.getElementById('curlyDiphthongs') as HTMLInputElement;
+
 const separatorInput = document.getElementById('separator') as HTMLInputElement;
 const addOptionalStartCheckbox = document.getElementById('addOptionalStart') as HTMLInputElement;
 const addOptionalEndCheckbox = document.getElementById('addOptionalEnd') as HTMLInputElement;
@@ -144,6 +146,7 @@ function generate() {
     header: metadataTextArea.value,
     quelisma: quelismaCheckbox.checked,
     includeBarredVParenthesis: includeBarredVParenthesisCheckbox.checked,
+    curlyDiphthongs: curlyDiphthongsCheckbox.checked
   };
 
   const gabc = generateGabc(inputText, selectedModel, parameters);

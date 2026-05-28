@@ -19,7 +19,8 @@ import path from 'path';
             removeParenthesis: { type: 'boolean', default: true, description: 'Remover parênteses e seu conteúdo da entrada' },
             separator: { type: 'string', default: '\n', description: 'Separador para pedaços de texto' },
             removeSeparator: { type: 'boolean', default: true, description: 'Se falso, o caractere separador será usado para unir as linhas GABC.' },
-            includeBarredVParenthesis: { type: 'boolean', default: true, description: 'Incluir () após o V/ barrado' }
+            includeBarredVParenthesis: { type: 'boolean', default: true, description: 'Incluir () após o V/ barrado' },
+            curlyDiphthongs: { type: 'boolean', default: false, description: 'Envolver ditongos em {} para o Gregorio centralizar a nota' }
         })
         .check((argv: { text: any; input: any; }) => {
             if (!argv.text && !argv.input) {
@@ -55,7 +56,8 @@ import path from 'path';
         removeParenthesis: argv.removeParenthesis,
         separator: argv.separator,
         removeSeparator: argv.removeSeparator,
-        includeBarredVParenthesis: argv.includeBarredVParenthesis
+        includeBarredVParenthesis: argv.includeBarredVParenthesis,
+        curlyDiphthongs: argv.curlyDiphthongs
     };
 
     const gabc = generateGabc(inputText, modelObject, parameters);

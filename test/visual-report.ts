@@ -101,7 +101,7 @@ async function generateSmallTestsReport() {
         content += `\\rendersidebyside{${escapeLatex(paramName)}}{${escapeLatex(trueTest.id)}}{${snippetTrue}}{${escapeLatex(falseTest.id)}}{${snippetFalse}}\n`;
     }
 
-    const latex = template.replace("{{CONTENT}}", content);
+    const latex = template.replaceAll("{{CONTENT}}", content);
     
     const texPath = path.join(LATEX_DIR, "small-tests.tex");
     fs.writeFileSync(texPath, latex);
@@ -134,11 +134,11 @@ async function generateBigTestsReports() {
         const augustinusSnippet = cleanGabcForSnippet(augustinusGabc);
 
         let latex = template
-            .replace("{{TITLE}}", escapeLatex(test.description))
-            .replace("{{TEXT_FILE}}", escapeLatex(test.text))
-            .replace("{{MODEL}}", escapeLatex(test.model))
-            .replace("{{REFERENCE_GABC}}", referenceSnippet)
-            .replace("{{AUGUSTINUS_GABC}}", augustinusSnippet);
+            .replaceAll("{{TITLE}}", escapeLatex(test.description))
+            .replaceAll("{{TEXT_FILE}}", escapeLatex(test.text))
+            .replaceAll("{{MODEL}}", escapeLatex(test.model))
+            .replaceAll("{{REFERENCE_GABC}}", referenceSnippet)
+            .replaceAll("{{AUGUSTINUS_GABC}}", augustinusSnippet);
 
         const texFilename = `big-test-${test.id}.tex`;
         fs.writeFileSync(path.join(LATEX_DIR, texFilename), latex);

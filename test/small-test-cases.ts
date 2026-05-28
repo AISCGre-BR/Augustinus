@@ -145,6 +145,22 @@ export const smallTestCases: TestCase[] = [
         expectedInclude: ["<c><sp>V/</sp>.</c>()"]
     },
     {
+        id: "include-curly-diphthongs-true",
+        description: "Incluir {} nas ocorrências de ditongos: TRUE",
+        text: "Ó Deus todo-poderoso",
+        model: "Oração tom solene",
+        parameters: { separator: ".", curlyDiphthongs: true },
+        expectedInclude: ["{eu}"]
+    },
+    {
+        id: "include-curly-diphthongs-false",
+        description: "Incluir {} nas ocorrências de ditongos: FALSE",
+        text: "Ó Deus todo-poderoso",
+        model: "Oração tom solene",
+        parameters: { separator: ".", curlyDiphthongs: false },
+        expectedExclude: ["{eu}"]
+    },
+    {
         id: "include-barred-v-parenthesis-false",
         description: "Incluir parênteses no V/ barrado: FALSE",
         text: "Ó Deus todo-poderoso",

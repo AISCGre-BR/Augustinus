@@ -56,8 +56,10 @@ function psalmLogic(input: string[], notes: string[]) { //Função que aplica a 
     }
 };
 
-function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision?: boolean): string {
+function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision?: boolean, curlyDiphthongs?: boolean): string {
     lyrics = lyrics.normalize("NFC");
+    const vowels = "aeiouáéíóúâêîôûãõàèìòùäëïöü";
+    const diphthongRegex = new RegExp(`([${vowels}])([${vowels}])`, "gi");
     const unstressedMonosyllables: string[] = ["a", "e", "o", "as", "os", "um", "uns", "de", "do", "da", "dos", "das", "em", "no", "na", "nos", "nas", "que", "me", "te", "se", "lhe", "lhes", "com", "por", "sem", "seu", "seus", "meu", "meus", "teu", "teus", "eu", "tu", "mas", "ou", "sou", "foi", "ao", "aos", "pois", "diz"];
     const taggedParts: string[] = [];
     const placeholder = "||TAGGEDPART||";
@@ -79,7 +81,11 @@ function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision
             const tonicIndex = syllableArray.length - tonic(syllableArray);
             const result = syllableArray.map((s, i) => {
                 const isUnstressed = unstressedMonosyllables.includes(s);
-                return (i === tonicIndex && !isUnstressed) ? "#" + s : s;
+                let processedSyllable = (i === tonicIndex && !isUnstressed) ? "#" + s : s;
+                if (curlyDiphthongs) {
+                    processedSyllable = processedSyllable.replace(diphthongRegex, "{$1$2}");
+                }
+                return processedSyllable;
             }).join("") + "@";
             // console.log(`Token: "${token}", SyllableArray:`, syllableArray, `tonicIndex: ${tonicIndex}, Final: "${result}"`);
             return result;
@@ -294,6 +300,7 @@ export interface Parameters {
     header?: string;
     quelisma?: boolean;
     includeBarredVParenthesis?: boolean;
+    curlyDiphthongs?: boolean;
 }
 
 export default function generateGabc(input: string, modelObject: Model, parametersObject: Parameters): string {
@@ -353,7 +360,7 @@ export default function generateGabc(input: string, modelObject: Model, paramete
             if (replacement !== undefined) {
                 gabcLines.push(replacement);
             } else {
-                gabcLines.push(applyModel(chunk, model.default, psalm, parametersObject.doElision));
+                gabcLines.push(applyModel(chunk, model.default, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs));
             }
             continue;
         }
@@ -362,9 +369,9 @@ export default function generateGabc(input: string, modelObject: Model, paramete
         const pattern = model.patterns.find(p => p.symbol === lastChar);
         if (pattern) {
             const text = model.type === 'leitura' ? chunk.trim() : chunk.slice(0, -1).trim();
-            gabcLines.push(applyModel(text, pattern.gabc, psalm, parametersObject.doElision))
+            gabcLines.push(applyModel(text, pattern.gabc, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs))
         } else {
-            gabcLines.push(applyModel(chunk.trim() + (parametersObject.removeSeparator === false ? parametersObject.separator : ''), model.default, psalm, parametersObject.doElision));
+            gabcLines.push(applyModel(chunk.trim() + (parametersObject.removeSeparator === false ? parametersObject.separator : ''), model.default, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs));
         }
     }
     if (psalm) {

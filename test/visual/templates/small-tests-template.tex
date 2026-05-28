@@ -11,12 +11,22 @@
 \author{Sistema de Testes Automatizado}
 \date{\today}
 
+% Configuração para o bloco de código GABC
+\definecolor{codebg}{gray}{0.95}
+\newcommand{\printgabc}[1]{%
+    \vspace{0.3em}%
+    \noindent\colorbox{codebg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\footnotesize\ttfamily\detokenize{#1}}}%
+    \vspace{0.5em}%
+}
+
 % Macro para teste simples
 % #1: Descrição, #2: ID, #3: Modelo, #4: Texto, #5: GABC
 \newcommand{\rendersmalltest}[5]{
     \subsection{#1}
     \textbf{ID:} \texttt{#2} \quad \textbf{Modelo:} #3 \\
-    \textbf{Texto:} ``#4''
+    \textbf{Texto:} ``#4'' \\
+    \textbf{Código GABC:}
+    \printgabc{#5}
     \vspace{0.5em}
     \gabcsnippet{#5}
     \vspace{1em}
@@ -30,6 +40,7 @@
     \begin{minipage}[t]{0.48\textwidth}
         % \centering
         \textbf{TRUE} (#2)\\
+        \printgabc{#3}
         \vspace{0.5em}
         \gabcsnippet{#3}
     \end{minipage}
@@ -37,6 +48,7 @@
     \begin{minipage}[t]{0.48\textwidth}
         % \centering
         \textbf{FALSE} (#4)\\
+        \printgabc{#5}
         \vspace{0.5em}
         \gabcsnippet{#5}
     \end{minipage}
