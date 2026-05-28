@@ -1,0 +1,56 @@
+\documentclass[a4paper]{article}
+\usepackage{gregoriotex}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage{geometry}
+\usepackage{xcolor}
+\geometry{margin=2cm}
+
+\title{Relatório de Testes Unitários - Augustinus}
+\author{Sistema de Testes Automatizado}
+\date{\today}
+
+% Macro para teste simples
+% #1: Descrição, #2: ID, #3: Modelo, #4: Texto, #5: GABC
+\newcommand{\rendersmalltest}[5]{
+    \subsection{#1}
+    \textbf{ID:} \texttt{#2} \quad \textbf{Modelo:} #3 \\
+    \textbf{Texto:} ``#4''
+    \vspace{0.5em}
+    \gabcsnippet{#5}
+    \vspace{1em}
+    \hrule
+}
+
+% Macro para teste lado a lado (parâmetros)
+% #1: Nome do Parâmetro, #2: ID True, #3: GABC True, #4: ID False, #5: GABC False
+\newcommand{\rendersidebyside}[5]{
+    \subsection{Parâmetro: #1}
+    \begin{minipage}[t]{0.48\textwidth}
+        % \centering
+        \textbf{TRUE} (#2)\\
+        \vspace{0.5em}
+        \gabcsnippet{#3}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        % \centering
+        \textbf{FALSE} (#4)\\
+        \vspace{0.5em}
+        \gabcsnippet{#5}
+    \end{minipage}
+    \vspace{1em}
+    \hrule
+}
+
+\begin{document}
+\gresetinitiallines{0}
+\maketitle
+
+\section{Introdução}
+Este documento apresenta o resultado visual dos testes unitários (pequenos) do Augustinus. Cada seção abaixo corresponde a um caso de teste definido em \texttt{small-test-cases.ts}.
+
+{{CONTENT}}
+
+\end{document}

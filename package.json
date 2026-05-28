@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "bun test",
+    "test:visual": "bun test/visual-report.ts",
     "start:frontend": "bun run --filter=augustinus-frontend dev",
     "start:cli": "bun run --filter=@augustinus/cli start",
     "start:api": "bun run --filter=@augustinus/api start"
@@ -14,7 +16,8 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "esbuild": "^0.25.9",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^4.1.7"
   },
   "dependencies": {
     "separador-silabas": "^2.4.1",

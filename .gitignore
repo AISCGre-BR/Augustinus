@@ -31,5 +31,9 @@ packages/api
 
 Dockerfile
 
-bug.md
+bugs
 .antigravitycli/
+
+# Test artifacts
+test/visual/output/*.pdf
+test/visual/latex/*

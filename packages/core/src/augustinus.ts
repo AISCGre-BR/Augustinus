@@ -77,7 +77,12 @@ function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision
             }
             const syllableArray = syllable(token).split(/(?<=@)/);
             const tonicIndex = syllableArray.length - tonic(syllableArray);
-            return syllableArray.map((s, i) => (i === tonicIndex && !unstressedMonosyllables.includes(s)) ? "#" + s : s).join("") + "@";
+            const result = syllableArray.map((s, i) => {
+                const isUnstressed = unstressedMonosyllables.includes(s);
+                return (i === tonicIndex && !isUnstressed) ? "#" + s : s;
+            }).join("") + "@";
+            // console.log(`Token: "${token}", SyllableArray:`, syllableArray, `tonicIndex: ${tonicIndex}, Final: "${result}"`);
+            return result;
         }
 
         if (word.includes(placeholder)) {
@@ -120,7 +125,7 @@ function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision
             const nextSyllable = gabcOutputArray[i + 1] || "";
 
             if (currentSyllable.includes('_')) {
-                console.log(currentSyllable, nextSyllable);
+                // console.log(currentSyllable, nextSyllable);
                 gabcOutputArray[i] = currentSyllable.replace(/[@_]/g, "") + "~" + nextSyllable;
                 gabcOutputArray.splice(i + 1, 1);
                 i--;
@@ -288,6 +293,7 @@ export interface Parameters {
     customStart?: string;
     header?: string;
     quelisma?: boolean;
+    includeBarredVParenthesis?: boolean;
 }
 
 export default function generateGabc(input: string, modelObject: Model, parametersObject: Parameters): string {
@@ -312,7 +318,7 @@ export default function generateGabc(input: string, modelObject: Model, paramete
         input = input.replace(/[0-9]/g, "");
     }
     if (parametersObject.removeParenthesis) {
-        input = input.replace(/\([\s\S]*?\)/g, "");
+        input = input.replace(/\([\s\S]*?\)\s*,?\s*/g, "");
     } else {
         input = input.replaceAll("(", "<v>(</v>");
         input = input.replaceAll(")", "<v>)</v>");
@@ -327,7 +333,13 @@ export default function generateGabc(input: string, modelObject: Model, paramete
     if (modelObject.type === "prefacio" && modelObject.tom === "solene") {
         input = input.replaceAll("Por isso,", "Por isso," + parametersObject.separator);
     }
-    const chunks: string[] = input.split(parametersObject.separator).map(s => s.trim()).filter(chunk => chunk && chunk !== parametersObject.separator);
+    const chunks: string[] = input.split(parametersObject.separator).map(s => s.trim()).filter(chunk => {
+        if (!chunk || chunk === parametersObject.separator) return false;
+        const lastChar = chunk.slice(-1);
+        const pattern = modelObject.patterns.find(p => p.symbol === lastChar);
+        if (pattern) return true;
+        return /\p{L}|\p{N}/u.test(chunk);
+    });
     let gabcLines: string[] = [];
 
     for (const chunk of chunks) {
@@ -409,28 +421,38 @@ export default function generateGabc(input: string, modelObject: Model, paramete
     let resultGabc = "";
     if (parametersObject.addOptionalStart && !psalm) {
         resultGabc = [model.optionalStart, ...gabcLines].join("\n");
-        // Add an exception: Add (::) to the end, then replace (:) (::) with (::)
-        resultGabc += "(::)";
-        resultGabc = resultGabc.replaceAll("(:)(::)", "(::)");
-
-        if (parametersObject.addOptionalEnd) {
-            resultGabc += "\n" + model.optionalEnd;
-        }
     } else {
         if (gabcLines.length > 0) {
             gabcLines[0] = model.start + gabcLines[0];
         }
         resultGabc = gabcLines.join("\n");
     }
+
+    if (parametersObject.addOptionalEnd && !psalm && model.optionalEnd) {
+        resultGabc += "\n" + model.optionalEnd;
+    }
+
+    // Always ensure (::) at the end, and cleanup (:) (::)
+    if (!resultGabc.endsWith("(::)") && !resultGabc.endsWith("(::Z)")) {
+        resultGabc += "(::)";
+    }
+    resultGabc = resultGabc.replaceAll("(:)(::)", "(::)");
+    resultGabc = resultGabc.replaceAll("(:) (::)", " (::)");
     resultGabc = resultGabc.replaceAll(/'(\([^)]+\))?/gm, "(,)");
     if (parametersObject.header) {
         resultGabc = parametersObject.header + "\n%%\n" + resultGabc;
     }
     // if quelisma (experimental)
     if (parametersObject.quelisma) {
-        resultGabc = resultGabc.replaceAll("can(g)tan(g)do(g) a(g) u(fe)ma(ef) só(g) voz:.(fgf) (::)", "can(g)tan(fgwh)do(g) a(g) u(fe)ma(ef) só(g) voz:(fgf) (::)")
+        resultGabc = resultGabc.replaceAll(/can\(g\)tan\(g\)do\(g\) a\(g\) u\(fe\)ma\(ef\) só\(g\) voz:?\.?\(fgf\)\s*\(::\)/g, "can(g)tan(fgwh)do(g) a(g) u(fe)ma(ef) só(g) voz:(fgf) (::)")
     }
-    
+
+    if (parametersObject.includeBarredVParenthesis === false) {
+
+        resultGabc = resultGabc.replaceAll("</sp>.</c>()", "</sp>.</c>");
+        resultGabc = resultGabc.replaceAll("</sp>.()", "</sp>.");
+        resultGabc = resultGabc.replaceAll("</sp>()", "</sp>");
+    }
     
     // fix temporary use cases
     resultGabc = resultGabc.replaceAll(",.", ",");

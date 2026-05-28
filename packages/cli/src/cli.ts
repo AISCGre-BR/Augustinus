@@ -18,7 +18,8 @@ import path from 'path';
             removeNumbers: { type: 'boolean', default: false, description: 'Remover números da entrada' },
             removeParenthesis: { type: 'boolean', default: true, description: 'Remover parênteses e seu conteúdo da entrada' },
             separator: { type: 'string', default: '\n', description: 'Separador para pedaços de texto' },
-            removeSeparator: { type: 'boolean', default: true, description: 'Se falso, o caractere separador será usado para unir as linhas GABC.' }
+            removeSeparator: { type: 'boolean', default: true, description: 'Se falso, o caractere separador será usado para unir as linhas GABC.' },
+            includeBarredVParenthesis: { type: 'boolean', default: true, description: 'Incluir () após o V/ barrado' }
         })
         .check((argv: { text: any; input: any; }) => {
             if (!argv.text && !argv.input) {
@@ -53,7 +54,8 @@ import path from 'path';
         removeNumbers: argv.removeNumbers,
         removeParenthesis: argv.removeParenthesis,
         separator: argv.separator,
-        removeSeparator: argv.removeSeparator
+        removeSeparator: argv.removeSeparator,
+        includeBarredVParenthesis: argv.includeBarredVParenthesis
     };
 
     const gabc = generateGabc(inputText, modelObject, parameters);

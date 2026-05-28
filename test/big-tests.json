@@ -1,0 +1,50 @@
+[
+  {
+    "id": "bencao-solene",
+    "description": "Benção Solene",
+    "text": "source/bencao.txt",
+    "reference": "references/bencao-tom-solene.gabc",
+    "model": "Bênção tom solene",
+    "parameters": { "separator": ".", "removeSeparator": false, "removeParenthesis": true }
+  },
+  {
+    "id": "coleta-solene",
+    "description": "Oração (Coleta) Tom Solene",
+    "text": "source/coleta.txt",
+    "reference": "references/coleta-tom-solene.gabc",
+    "model": "Oração tom solene",
+    "parameters": { "separator": ".", "removeSeparator": false, "removeParenthesis": true }
+  },
+  {
+    "id": "coleta-simples-a",
+    "description": "Oração (Coleta) Tom Simples A",
+    "text": "source/coleta.txt",
+    "reference": "references/coleta-tom-simples-a.gabc",
+    "model": "Oração tom simples A",
+    "parameters": { "separator": ".", "removeSeparator": false, "removeParenthesis": true }
+  },
+  {
+    "id": "coleta-simples-b",
+    "description": "Oração (Coleta) Tom Simples B",
+    "text": "source/coleta.txt",
+    "reference": "references/coleta-tom-simples-b.gabc",
+    "model": "Oração tom simples B",
+    "parameters": { "separator": ".", "removeSeparator": false, "removeParenthesis": true }
+  },
+  {
+    "id": "prefacio-simples",
+    "description": "Prefácio Tom Simples",
+    "text": "source/prefacio.txt",
+    "reference": "references/prefacio-tom-simples.gabc",
+    "model": "Prefácio tom simples",
+    "parameters": { "separator": ".", "removeSeparator": false, "removeParenthesis": true }
+  },
+  {
+    "id": "prefacio-solene",
+    "description": "Prefácio Tom Solene",
+    "text": "source/prefacio.txt",
+    "reference": "references/prefacio-tom-solene.gabc",
+    "model": "Prefácio tom solene",
+    "parameters": { "separator": ".", "removeSeparator": false, "removeParenthesis": true }
+  }
+]
