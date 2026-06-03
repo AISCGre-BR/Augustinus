@@ -1,356 +1,46 @@
-import { syllable, tonic } from "separador-silabas";
+import { Model, Parameters } from "./types/index.js";
+import { preprocessInput, handleCustomModel } from "./core/parameters.js";
+import { applyModel } from "./modules/apply-model.js";
 import defaultModels from '../assets/models.json' with { type: 'json' };
 
-function replaceFromEnd(input: string, find: string, replaceWith: string, limit?: number): string {
-    let result: string = input;
-    let replacementsMade: number = 0;
-    if (find.length === 0) {
-        return input;
-    }
-    let currentSearchIndex: number = result.length;
-    let lastFoundIndex: number = result.lastIndexOf(find, currentSearchIndex - 1);
-
-    while (lastFoundIndex !== -1 && (limit === undefined || replacementsMade < limit)) {
-        result = result.substring(0, lastFoundIndex) + replaceWith + result.substring(lastFoundIndex + find.length);
-        replacementsMade++;
-        currentSearchIndex = lastFoundIndex;
-        lastFoundIndex = result.lastIndexOf(find, currentSearchIndex - 1);
-    }
-
-    return result;
-}
-
-// Lógica de posicionamento das notas nas sílabas de um salmo
-function psalmLogic(input: string[], notes: string[]) { //Função que aplica a lógica no array de sílabas com as tônicas marcadas com #
-    const i = input.length;
-    let tonicNote = notes.filter(note => note.includes("r1")).reverse().map(note => note.replace("r1", "")); // Procura pela nota da tônica melódica
-    const replaceAt = (index: number, value: string) => { input[index] = input[index].replace("@", value) }; // Função menor, parecida com a replaceFromEnd, mas para array
-    // const isTonic = (index: number): boolean => input[index]?.includes("#") ?? false; // Função que será usada mais tarde
-    const tonicIndex = i - input.findLastIndex(syllable => syllable.includes("#")); // Procura pelo índice da primeira sílaba tônica de trás pra frente
-    notes = notes.map(notes => notes.replace("r1", "").replace("r", "") || ""); // Limpa as marcações de acento das notas
-    if (tonicNote.length > 0) {
-        switch (tonicIndex) {
-            case 1:
-                replaceAt(i - 1, tonicNote[0].replace(")", ""));
-                input[i - 1] += notes[notes.length - 1].replace("(", "");
-                break;
-
-            case 2:
-                replaceAt(i - 2, tonicNote[0]);
-                replaceAt(i - 1, notes[notes.length - 1]);
-                break;
-
-            case 3:
-                replaceAt(i - 3, tonicNote[1] ? tonicNote[1] : tonicNote[0]);
-                replaceAt(i - 2, notes[notes.length - 2]);
-                replaceAt(i - 1, notes[notes.length - 1]);
-                break;
-
-            default:
-                replaceAt(i - 2, tonicNote[0]);
-                replaceAt(i - 1, notes[notes.length - 1]);
-                break;
-        }
-    } else { // Para o caso de não ter tônica melódica (tom Cc)
-        replaceAt(i - 1, notes[notes.length - 1]);
-    }
-};
-
-function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision?: boolean, curlyDiphthongs?: boolean): string {
-    lyrics = lyrics.normalize("NFC");
-    const vowels = "aeiouáéíóúâêîôûãõàèìòùäëïöü";
-    const diphthongRegex = new RegExp(`([${vowels}])([${vowels}])`, "gi");
-    const unstressedMonosyllables: string[] = ["a", "e", "o", "as", "os", "um", "uns", "de", "do", "da", "dos", "das", "em", "no", "na", "nos", "nas", "que", "me", "te", "se", "lhe", "lhes", "com", "por", "sem", "seu", "seus", "meu", "meus", "teu", "teus", "eu", "tu", "mas", "ou", "sou", "foi", "ao", "aos", "pois", "diz"];
-    const taggedParts: string[] = [];
-    const placeholder = "||TAGGEDPART||";
-
-    let deTaggedLyrics = lyrics.replace(/(<[^>]+>)/g, (match) => {
-        taggedParts.push(match);
-        return placeholder;
-    });
-
-    let wordsWithNotePlaceholders: string[] = deTaggedLyrics.split(/\s+/).filter(w => w).map(word => {
-        const processToken = (token: string) => {
-            if (token === placeholder) {
-                return taggedParts.shift() || "";
-            }
-            if (!/[a-zA-Z\u00C0-\u00FF]/i.test(token)) {
-                return token;
-            }
-            const syllableArray = syllable(token).split(/(?<=@)/);
-            const tonicIndex = syllableArray.length - tonic(syllableArray);
-            const result = syllableArray.map((s, i) => {
-                const isUnstressed = unstressedMonosyllables.includes(s);
-                let processedSyllable = (i === tonicIndex && !isUnstressed) ? "#" + s : s;
-                if (curlyDiphthongs) {
-                    processedSyllable = processedSyllable.replace(diphthongRegex, "{$1$2}");
-                }
-                return processedSyllable;
-            }).join("") + "@";
-            // console.log(`Token: "${token}", SyllableArray:`, syllableArray, `tonicIndex: ${tonicIndex}, Final: "${result}"`);
-            return result;
-        }
-
-        if (word.includes(placeholder)) {
-            return word.split(/(\|\|TAGGEDPART\|\|)/).filter(t => t).map(processToken).join("");
-        }
-        return processToken(word);
-    });
-
-    let gabcOutput: string = "";
-    let modelSegments: string[] = gabcModel.split(/(\([a-n]r [a-n]r [a-n]r\))/gm);
-    const validModelSegments: string[] = modelSegments.filter(segment => segment && segment.trim() !== '');
-    const prefixNotesRaw: string = (validModelSegments[0] || "").trim();
-    const prefixNotesArray: string[] = prefixNotesRaw.split(" ");
-    const extractedTripletRootNote: string = "(" + (validModelSegments[1] || "").trim().charAt(1) + ")";
-    const suffixString: string = (validModelSegments[2] || "").trim();
-    let isDynamic: boolean = false;
-    if (suffixString.includes("r1") || psalm) {
-        isDynamic = true
-    }
-    const wordCount: number = wordsWithNotePlaceholders.length;
-
-    let lastWordForTonic = "";
-    for (let i = wordCount - 1; i >= 0; i--) {
-        const currentWord = wordsWithNotePlaceholders[i] || "";
-        if (!currentWord.includes('<')) {
-            lastWordForTonic = currentWord;
-            break;
-        }
-    }
-
-    let notes: string[] = suffixString.split(" ") || [];
-
-    gabcOutput += wordsWithNotePlaceholders.join(" ");
-    let gabcOutputArray: string[] = gabcOutput.split(/(?<=@)/);
-
-    // ELISIONS
-    if (!doElision) {
-        for (let i = 0; i < gabcOutputArray.length; i++) {
-            const currentSyllable = gabcOutputArray[i] || "";
-            const nextSyllable = gabcOutputArray[i + 1] || "";
-
-            if (currentSyllable.includes('_')) {
-                // console.log(currentSyllable, nextSyllable);
-                gabcOutputArray[i] = currentSyllable.replace(/[@_]/g, "") + "~" + nextSyllable;
-                gabcOutputArray.splice(i + 1, 1);
-                i--;
-            }
-        }
-    }
-    
-    if (doElision) {
-        for (let i = 0; i < gabcOutputArray.length; i++) {
-            const currentSyllable = gabcOutputArray[i] || "";
-            const nextSyllable = gabcOutputArray[i + 1] || "";
-
-            const isSyllableElidable = /^(?!\s*#).*?[aeio]_?@?$/i.test(currentSyllable);
-            const isNextSyllableElidable = /^\s+(#?[aeiou])/i.test(nextSyllable);
-
-            if (isSyllableElidable && isNextSyllableElidable) {
-                //elisão elision
-                gabcOutputArray[i] = currentSyllable.replace(/[@_]/g, "") + "~" + nextSyllable;
-                gabcOutputArray.splice(i + 1, 1);
-                i--;
-            }
-
-        }
-    }
-
-    gabcOutputArray = gabcOutputArray.map((syllable) => 
-        syllable.replaceAll(/([aeiou](?:\s*~\s*#?\s*[aeiou])+)(?!_)/gi, (match) => {
-            return `{${match.replace(/\s+/g, "")}}`;
-        }
-    ));
-    gabcOutput = gabcOutputArray.join("");
-
-    if (isDynamic && lastWordForTonic) {
-        if (psalm) {
-            let pause: string = notes.pop() || "";
-            // Separa as notas do sufixo em dois grupos de acentos
-            let firstAccentIndex = notes.findIndex(note => note.includes("r1"));
-            let secondAccentIndex = notes.findIndex((note, i) => i > firstAccentIndex + 1 && note.includes("r1"));
-            let preNotesIndex = (firstAccentIndex - 1) >= 0 ? (firstAccentIndex - 1) : false;
-
-            // Se só tiver um acento, mantém um único grupo
-            let firstAccentNotes = secondAccentIndex === -1 ? notes.slice(firstAccentIndex) : notes.slice(firstAccentIndex, secondAccentIndex);
-            let secondAccentNotes = secondAccentIndex === -1 ? [] : notes.slice(secondAccentIndex);
-            let preNotes = preNotesIndex !== false ? notes.slice(0, preNotesIndex + 1) : false;
-
-            // Se tiver dois grupos, o secondAccentNotes é aplicado primeiro, depois cortado do array, o firstAccentNotes é aplicado ao que sobrou e os dois arrays são concatenados
-            if (secondAccentIndex !== -1) {
-                psalmLogic(gabcOutputArray, secondAccentNotes);
-                const firstAccentGabcIndex = gabcOutputArray.findIndex(syllable => syllable.includes("("));
-
-                const firstAccentGabc = gabcOutputArray.slice(firstAccentGabcIndex);
-                const secondAccentGabc = gabcOutputArray.slice(0, firstAccentGabcIndex);
-
-                psalmLogic(secondAccentGabc, firstAccentNotes);
-
-                gabcOutputArray = secondAccentGabc.concat(firstAccentGabc);
-            }
-            // Se tiver só um grupo, aplica o firstAccentNotes normalmente
-            else {
-                psalmLogic(gabcOutputArray, firstAccentNotes);
-            }
-            // Se tiver um grupo de notas prévias, aplica às sílabas restantes
-            if (preNotes) {
-                for (let i = preNotes.length - 1, j = gabcOutputArray.length - 1; i >= 0 && j >= 0; j--) {
-                    if (!gabcOutputArray[j].includes("(")) {
-                        gabcOutputArray[j] = gabcOutputArray[j].replace("@", preNotes[i]);
-                        i--;
-                    }
-                }
-            }
-            // Limpa os caracteres de marcação
-            gabcOutputArray = gabcOutputArray.map(syllable => syllable.replace(/#|(?<=\()'/g, ""));
-
-            // Junta o array com o GABC numa string e adiciona a pausa no final
-            gabcOutputArray.push(" " + pause);
-            gabcOutput = gabcOutputArray.join("");
-        }
-        gabcOutput = gabcOutput.replaceAll("#", "");
-
-        const tonicNumber: number = tonic(lastWordForTonic.split("@"));
-        let offset: number = 0;
-        for (let i = 0; i < notes.length; i++) {
-            if (notes[i]?.match("r1")) {
-                break;
-            }
-            offset++;
-        }
-        for (let i = 0; i < notes.length; i++) {
-            notes[i] = notes[i]?.replace("r1", "").replace("r", "") || "";
-        }
-
-        if (!psalm) {
-            switch (tonicNumber) {
-                case 1:
-                    const joinedNote: string = ((notes[0 + offset] || "").slice(0, -1) + (notes[2 + offset] || "").substring(1)).replaceAll(/([a-m])\1/g, "$1");
-                    gabcOutput = replaceFromEnd(gabcOutput, "@", joinedNote, 1);
-                    break;
-                case 2:
-                    gabcOutput = replaceFromEnd(gabcOutput, "@", notes[2 + offset] || "", 1);
-                    gabcOutput = replaceFromEnd(gabcOutput, "@", notes[0 + offset] || "", 1);
-                    break;
-                default:
-                    gabcOutput = replaceFromEnd(gabcOutput, "@", notes[2 + offset] || "", 1);
-                    gabcOutput = replaceFromEnd(gabcOutput, "@", notes[1 + offset] || "", 1);
-                    gabcOutput = replaceFromEnd(gabcOutput, "@", notes[0 + offset] || "", 1);
-                    break;
-            }
-
-            for (let i = offset - 1; i >= 0; i--) {
-                gabcOutput = replaceFromEnd(gabcOutput, "@", notes[i] || "", 1);
-            }
-            for (let i = offset + 3; i < notes.length; i++) {
-                gabcOutput += " " + notes[i];
-            }
-        }
-
-    }
-    else {
-        for (let i = notes.length - 2; i >= 0; i--) {
-            gabcOutput = replaceFromEnd(gabcOutput, "@", notes[i] || "", 1);
-        }
-        gabcOutput += " " + notes[notes.length - 1];
-    }
-
-    for (let i = 0; i < prefixNotesArray.length; i++) {
-        gabcOutput = gabcOutput.replace('@', prefixNotesArray[i]!);
-    }
-
-    gabcOutput = gabcOutput.replaceAll("@", extractedTripletRootNote);
-    gabcOutput = gabcOutput.replaceAll("#", "");
-    return gabcOutput;
-}
-
-export interface Pattern {
-    symbol: string;
-    gabc: string;
-}
-
-export interface Model {
-    name: string;
-    type: string;
-    tom: string;
-    optionalEnd: string;
-    optionalStart: string;
-    start: string;
-    default: string;
-    patterns: Pattern[];
-    find: string[];
-    replace: string[];
-}
-
-export interface Parameters {
-    repeatIntonation?: boolean;
-    separateStanzas?: boolean;
-    doElision?: boolean;
-    addOptionalStart?: boolean;
-    addOptionalEnd?: boolean;
-    removeNumbers?: boolean;
-    removeParenthesis?: boolean;
-    separator: string;
-    removeSeparator?: boolean;
-    customNote?: string;
-    customClef?: string;
-    customPattern?: string;
-    customStart?: string;
-    header?: string;
-    quelisma?: boolean;
-    includeBarredVParenthesis?: boolean;
-    curlyDiphthongs?: boolean;
-}
-
 export default function generateGabc(input: string, modelObject: Model, parametersObject: Parameters): string {
-    let model = { ...modelObject };
-
+    let model = handleCustomModel(modelObject, parametersObject);
     let psalm = model.type === "salmo" ? true : false;
 
-    if (model.type === 'custom') {
-        if (model.tom === 'simples') {
-            const note = parametersObject.customNote || 'h';
-            const clef = parametersObject.customClef || 'c4';
-            model.start, model.optionalStart = "(" + clef + ") ";
-            model.default = "(" + note + ") (" + note + "r " + note + "r " + note + "r" + ")";
-        } else if (model.tom === 'solene') {
-            model.default = parametersObject.customPattern || '';
-            model.start = parametersObject.customStart || '';
-            model.optionalStart = parametersObject.customStart || '';
-        }
+    input = preprocessInput(input, parametersObject);
+
+    const specialTags: string[] = [];
+    input = input.replaceAll(/(<(sp|v|alt)\b[^>]*>[\s\S]*?<\/\2>)/gi, (match) => {
+        specialTags.push(match);
+        return `__SPECIAL_TAG_PLACEHOLDER_${specialTags.length - 1}__`;
+    });
+
+    for (let i = 0; i < model.patterns.length; i++) {
+        const symbol: string = model.patterns[i].symbol;
+        input = input.replaceAll(symbol, symbol + parametersObject.separator);
     }
 
-    if (parametersObject.removeNumbers) {
-        input = input.replace(/[0-9]/g, "");
-    }
-    if (parametersObject.removeParenthesis) {
-        input = input.replace(/\([\s\S]*?\)\s*,?\s*/g, "");
-    } else {
-        input = input.replaceAll("(", "<v>(</v>");
-        input = input.replaceAll(")", "<v>)</v>");
-    }
-    let regexEndings: string = "([\\" + parametersObject.separator;
-    for (let i = 0; i < modelObject.patterns.length; i++) {
-        const symbol: string = modelObject.patterns[i].symbol;
-        input = input.replaceAll(symbol, symbol + parametersObject.separator);
-        regexEndings += "\\" + symbol;
-    }
-    regexEndings += "]+)\\" + parametersObject.separator;
-    if (modelObject.type === "prefacio" && modelObject.tom === "solene") {
+    if (model.type === "prefacio" && model.tom === "solene") {
         input = input.replaceAll("Por isso,", "Por isso," + parametersObject.separator);
     }
+
     const chunks: string[] = input.split(parametersObject.separator).map(s => s.trim()).filter(chunk => {
         if (!chunk || chunk === parametersObject.separator) return false;
         const lastChar = chunk.slice(-1);
-        const pattern = modelObject.patterns.find(p => p.symbol === lastChar);
+        const pattern = model.patterns.find(p => p.symbol === lastChar);
         if (pattern) return true;
         return /\p{L}|\p{N}/u.test(chunk);
     });
+
     let gabcLines: string[] = [];
 
-    for (const chunk of chunks) {
-        if (modelObject.type === "prefacio" && modelObject.tom === "solene" && chunk == "Por isso,") {
+    for (let chunk of chunks) {
+        chunk = chunk.replace(/__SPECIAL_TAG_PLACEHOLDER_(\d+)__/g, (match, indexStr) => {
+            const idx = parseInt(indexStr, 10);
+            return specialTags[idx] || "";
+        });
+
+        if (model.type === "prefacio" && model.tom === "solene" && chunk == "Por isso,") {
             gabcLines.push("Por(f) is(ef)so,(f) (,) ");
             continue
         }
@@ -371,9 +61,12 @@ export default function generateGabc(input: string, modelObject: Model, paramete
             const text = model.type === 'leitura' ? chunk.trim() : chunk.slice(0, -1).trim();
             gabcLines.push(applyModel(text, pattern.gabc, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs))
         } else {
-            gabcLines.push(applyModel(chunk.trim() + (parametersObject.removeSeparator === false ? parametersObject.separator : ''), model.default, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs));
+            const trimmedChunk = chunk.trim();
+            const needsSeparator = parametersObject.removeSeparator === false && !/[.,;:!?]/.test(trimmedChunk.slice(-1));
+            gabcLines.push(applyModel(trimmedChunk + (needsSeparator ? parametersObject.separator : ''), model.default, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs));
         }
     }
+
     if (psalm) {
         const intonnationNotes = model.optionalStart.trim().split(" ").filter(n => n);
         let versicles = [];
@@ -392,7 +85,7 @@ export default function generateGabc(input: string, modelObject: Model, paramete
                 if (versicleIndex % 2 !== 0) {
                     let count = 0;
                     versicle[0] = versicle[0].replace(/\([a-zA-Z]\)/g, match => count < 2 ? intonnationNotes[count++] : match);
-                    if (versicleIndex > 1) versicle[0] = "<c>" + stanzaIndex + ".</c> " + versicle[0]; // numero versiculos
+                    if (versicleIndex > 1) versicle[0] = "<c>" + stanzaIndex + ".</c> " + versicle[0];
                     versicleIndex++;
                     stanzaIndex++;
                 } else {
@@ -408,7 +101,9 @@ export default function generateGabc(input: string, modelObject: Model, paramete
                 }
             } else {
                 let count = 0;
-                versicles[0][0] = versicles[0][0].replace(/\([a-zA-Z]\)/g, match => count < 2 ? intonnationNotes[count++] : match);
+                if (versicles.length > 0) {
+                    versicles[0][0] = versicles[0][0].replace(/\([a-zA-Z]\)/g, match => count < 2 ? intonnationNotes[count++] : match);
+                }
             }
             if (parametersObject.separateStanzas) {
                 for (const versicle of versicles) {
@@ -425,6 +120,7 @@ export default function generateGabc(input: string, modelObject: Model, paramete
         }
         gabcLines = versicles.flat();
     }
+
     let resultGabc = "";
     if (parametersObject.addOptionalStart && !psalm) {
         resultGabc = [model.optionalStart, ...gabcLines].join("\n");
@@ -439,7 +135,6 @@ export default function generateGabc(input: string, modelObject: Model, paramete
         resultGabc += "\n" + model.optionalEnd;
     }
 
-    // Always ensure (::) at the end, and cleanup (:) (::)
     if (!resultGabc.endsWith("(::)") && !resultGabc.endsWith("(::Z)")) {
         resultGabc += "(::)";
     }
@@ -449,25 +144,19 @@ export default function generateGabc(input: string, modelObject: Model, paramete
     if (parametersObject.header) {
         resultGabc = parametersObject.header + "\n%%\n" + resultGabc;
     }
-    // if quelisma (experimental)
+    // TODO: Evaluate if this experimental feature should be kept or refactored into a more robust system
     if (parametersObject.quelisma) {
         resultGabc = resultGabc.replaceAll(/can\(g\)tan\(g\)do\(g\) a\(g\) u\(fe\)ma\(ef\) só\(g\) voz:?\.?\(fgf\)\s*\(::\)/g, "can(g)tan(fgwh)do(g) a(g) u(fe)ma(ef) só(g) voz:(fgf) (::)")
     }
 
     if (parametersObject.includeBarredVParenthesis === false) {
-
         resultGabc = resultGabc.replaceAll("</sp>.</c>()", "</sp>.</c>");
         resultGabc = resultGabc.replaceAll("</sp>.()", "</sp>.");
         resultGabc = resultGabc.replaceAll("</sp>()", "</sp>");
     }
     
-    // fix temporary use cases
-    resultGabc = resultGabc.replaceAll(",.", ",");
-    resultGabc = resultGabc.replaceAll(";.", ";");
-    resultGabc = resultGabc.replaceAll(":.", ":");
-    resultGabc = resultGabc.replaceAll("?.", "?");
-    resultGabc = resultGabc.replaceAll("!.", "!");
     return resultGabc;
 }
 
 export { defaultModels };
+export * from "./types/index.js";

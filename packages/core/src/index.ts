@@ -1,1 +1,1 @@
-export { default, defaultModels, type Model, type Parameters } from "./augustinus.js";
+export { default, defaultModels, parameterDefinitions, getDefaultParameters, type Model, type Parameters } from "./augustinus.js";

@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
+import vue from '@vitejs/plugin-vue';
 import path from 'path';
 
 export default defineConfig({
@@ -12,17 +12,6 @@ export default defineConfig({
     include: ['separador-silabas'],
   },
   plugins: [
-    viteStaticCopy({
-      targets: [
-        {
-          src: 'exsurge.min.js',
-          dest: ''
-        },
-        {
-          src: 'exsurge.min.js.map',
-          dest: ''
-        }
-      ]
-    })
+    vue(),
   ]
 });

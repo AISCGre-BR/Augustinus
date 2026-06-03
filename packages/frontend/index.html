@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,137 +9,9 @@
 	<link rel="preload" href="./fonts/grelaon.ttf" as="font" crossorigin="">
 	<link rel="preload" href="./fonts/greextra.ttf" as="font" crossorigin="">
 	<title>Augustinus</title>
-
-	<link rel="stylesheet" href="/src/style.css" />
-
 </head>
-
 <body>
-	<div id="app">
-		<header>
-    <div class="left-content">
-        <img src="/Saint_Augustine_by_Philippe_de_Champaigne.webp" alt="Saint Augustine" class="logo" />
-        <h1>Augustinus</h1>
-    </div>
-    <div id="docs">
-        <a href="https://github.com/AISCGre-BR/Augustinus/tree/main/docs">Acesse a documentação aqui</a>
-    </div>
-</header>
-		<main>
-			<div class="controls">
-				<details>
-					<summary>Opções</summary>
-					<div class="options-grid">
-						<div id="model-option" class="option">
-							<label for="model">Modelo:</label>
-							<select id="model">
-								<option value = "">-- Selecione um modelo --</option>
-							</select>
-						</div>
-						<div class="option">
-							<label for="separator">Separador:</label>
-							<input type="text" id="separator" value="." />
-						</div>
-						<div class="option">
-							<input type="checkbox" id="addOptionalStart" checked />
-							<label for="addOptionalStart">Adicionar começo</label>
-						</div>
-						<div class="option">
-							<input type="checkbox" id="addOptionalEnd" checked />
-							<label for="addOptionalEnd">Adicionar final</label>
-						</div>
-						<div class="option">
-							<input type="checkbox" id="removeNumbers" checked />
-							<label for="removeNumbers">Remover números</label>
-						</div>
-						<div class="option">
-							<input type="checkbox" id="removeParenthesis" checked />
-							<label for="removeParenthesis">Remover parênteses</label>
-						</div>
-						<div class="option">
-							<input type="checkbox" id="removeSeparator" />
-							<label for="removeSeparator">Remover separador</label>
-						</div>
-						<div id="quelisma-option" class="option">
-							<input type="checkbox" id="quelisma" />
-							<label for="quelisma">Quelisma no prefácio (experimental)</label>
-						</div>
-						<div id="barred-v-parenthesis-option" class="option">
-							<input type="checkbox" id="includeBarredVParenthesis" checked />
-							<label for="includeBarredVParenthesis">Incluir () após o ℣ barrado</label>
-						</div>
-						<div id="curly-dihpthong-option" class="option">
-							<input type="checkbox" id="curlyDiphthongs" checked />
-							<label for="curlyDiphthongs">Incluir {} em ditongos</label>
-						</div>
-					</div>
-					<div id="custom-options" style="display: none;">
-						<div id="custom-simples-options" style="display: none;">
-							<label for="custom-note">Nota:</label>
-							<input type="text" id="custom-note" value="g" />
-							<label for="custom-clef">Clave:</label>
-							<select id="custom-clef">
-								<option value="c1">c1</option>
-								<option value="c2">c2</option>
-								<option value="c3">c3</option>
-								<option value="c4">c4</option>
-								<option value="f3">f3</option>
-								<option value="f4">f4</option>
-								<option value="cb3">cb3</option>
-							</select>
-						</div>
-						<div id="custom-solene-options" style="display: none;">
-							<label for="custom-pattern">Padrão:</label>
-							<textarea id="custom-pattern"
-								rows="5">(g) (gr gr gr) (fe) (ef) (g) (fgr1) (fr) (f) (:)</textarea>
-							<label for="custom-start">Começo:</label>
-							<input type="text" id="custom-start" value="(c3) <sp>V/</sp> " />
-						</div>
-					</div>
-					<div id="psalm-controls" class="psalm-controls">
-						<h3>Opções dos salmos</h3>
-					<div id="psalm-option" class="option">
-							<label for="psalm">Salmodia:</label>
-							<select id="psalm">
-								<option value = "">-- Selecione uma salmodia --</option>
-							</select>
-						</div>
-						<div id="repeat-intonation-option" class="option">
-							<input type="checkbox" id="repeatIntonation" checked />
-							<label for="repeatIntonation">Repetir entonação</label>
-						</div>
-						<div id="separate-stanzas-option" class="option">
-							<input type="checkbox" id="separateStanzas" checked />
-							<label for="separateStanzas">Separar estrofes</label>
-						</div>
-						<div id="elision-option" class="option">
-							<input type="checkbox" id="doElision" />
-							<label for="doElision">Fazer elisão (experimental)</label>
-						</div>
-						</div>
-				</details>
-				<label for="metadata">Metadados</label>
-				<textarea id="metadata" rows="5" spellcheck="false"></textarea>
-				<label for="input">Texto</label>
-				<textarea id="input" rows="10" spellcheck="false"></textarea>
-				<button id="generate">Gerar</button>
-				<div class="export-buttons">
-					<button id="export-svg">Exportar SVG</button>
-					<button id="export-png">Exportar PNG</button>
-					<button id="export-pdf">Exportar PDF</button>
-				</div>
-				<label for="gabc">GABC</label>
-				<textarea id="gabc" rows="10" spellcheck="false"></textarea>
-
-			</div>
-			<div class="output">
-				<div class="a4-container">
-					<div id="chant-container" class="chant-container"></div>
-				</div>
-			</div>
-		</main>
-	</div>
+	<div id="app"></div>
 	<script type="module" src="/src/main.ts"></script>
 </body>
-
 </html>

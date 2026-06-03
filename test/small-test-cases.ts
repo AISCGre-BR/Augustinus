@@ -185,5 +185,45 @@ export const smallTestCases: TestCase[] = [
         parameters: { separator: ".", doElision: false },
         expectedExclude: ["{mi~nha~al(g)ma(h)}"],
         expectedInclude: ["mi(g)nha(g) al(h)ma(h)"]
+    },
+    {
+        id: "tag-preservation-simple",
+        description: "Preservação de tags simples (<b>)",
+        text: "Ó <b>benção</b> todo-poderoso",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<b>ben(h)ção(h)</b>"]
+    },
+    {
+        id: "tag-inside-word",
+        description: "Tag dentro de uma palavra",
+        text: "Ó ben<b>ção</b> todo-poderoso",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["ben(h)<b>ção(h)</b>"]
+    },
+    {
+        id: "tag-preservation-barred-v",
+        description: "Preservação de tag de versículo (<sp>V/</sp>)",
+        text: "<sp>V/</sp> O Senhor esteja convosco",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<sp>V/</sp> O(g) Se(h)nhor(h)"]
+    },
+    {
+        id: "tag-preservation-alt",
+        description: "Preservação de tag de alternativa (<alt>Alt.</alt>)",
+        text: "<alt>Alt.</alt> O Senhor esteja convosco",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<alt>Alt.</alt> O(g) Se(h)nhor(h)"]
+    },
+    {
+        id: "tag-across-words",
+        description: "Tag abrangendo múltiplas palavras",
+        text: "Ó <b>Deus todo</b> poderoso",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<b>Deus(h) to(h)do(h)</b>"]
     }
 ];

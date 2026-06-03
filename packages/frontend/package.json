@@ -10,10 +10,13 @@
   },
   "devDependencies": {
     "@augustinus/core": "workspace:*",
+    "@testneumz/nabc-lib": "^2.2.22",
     "@types/node": "^20.0.0",
-    "vite": "^5.0.0",
+    "@vitejs/plugin-vue": "^6.0.7",
     "typescript": "^5.0.0",
-    "vite-plugin-static-copy": "^0.17.0",
-    "@testneumz/nabc-lib": "^2.2.22"
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "vue": "3"
   }
 }
