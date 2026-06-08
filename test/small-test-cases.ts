@@ -245,25 +245,25 @@ export const smallTestCases: TestCase[] = [
     {
         id: "stack-2-lines",
         description: "Suporte a texto multi-linha (2 linhas)",
-        text: "[top/bottom]ta",
+        text: "[cima/baixo] assim",
         model: "Oração tom solene",
         parameters: { separator: "." },
-        expectedInclude: ["\\stacktext{\\vphantom{dp}top&\\vphantom{dp}bottom}"]
+        expectedInclude: ["\\stacktext{\\vphantom{dp}cima&\\vphantom{dp}baixo}"]
     },
     {
         id: "stack-3-lines",
         description: "Suporte a texto multi-linha (3 linhas)",
-        text: "[top/middle/bottom]ta",
+        text: "[cima/meio/baixo] assim",
         model: "Oração tom solene",
         parameters: { separator: "." },
-        expectedInclude: ["\\stacktext{\\vphantom{dp}top&\\vphantom{dp}middle&\\vphantom{dp}bottom}"]
+        expectedInclude: ["\\stacktext{\\vphantom{dp}cima&\\vphantom{dp}meio&\\vphantom{dp}baixo}"]
     },
     {
         id: "stack-4-lines",
         description: "Suporte a texto multi-linha (4 linhas)",
-        text: "[one/two/three/four]ta",
+        text: "[um/dois/três/quatro] assim",
         model: "Oração tom solene",
         parameters: { separator: "." },
-        expectedInclude: ["\\stacktext{\\vphantom{dp}one&\\vphantom{dp}two&\\vphantom{dp}three&\\vphantom{dp}four}"]
+        expectedInclude: ["\\stacktext{\\vphantom{dp}um&\\vphantom{dp}dois&\\vphantom{dp}três&\\vphantom{dp}quatro}"]
     }
 ];
