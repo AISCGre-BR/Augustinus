@@ -7,6 +7,10 @@
 \usepackage{xcolor} % Suporte a cores
 \usepackage{paracol} % Permite colunas lado a lado que quebram página
 \usepackage{xurl} % Permite quebra de linha do GABC em qualquer caractere
+\usepackage{stackengine}
+\stackText
+\setstackEOL{&}
+\newcommand{\stacktext}[1]{{\Shortunderstack[c]{#1}}}
 \geometry{margin=1.5cm}
 
 \title{Comparativo: {{TITLE}}}

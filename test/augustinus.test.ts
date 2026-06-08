@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import generateGabc, { defaultModels } from '../packages/core/src/augustinus';
+import generateGabc, { defaultModels, type Parameters } from '../packages/core/src/augustinus';
 import { smallTestCases } from './small-test-cases';
 
 describe('Augustinus Core - Functional Tests (Small Cases)', () => {
@@ -11,7 +11,21 @@ describe('Augustinus Core - Functional Tests (Small Cases)', () => {
                 throw new Error(`Model not found: ${testCase.model}`);
             }
             
-            const result = generateGabc(testCase.text, model as any, testCase.parameters);
+            const testParams: Partial<Parameters> = {
+                addOptionalStart: false,
+                addOptionalEnd: false,
+                removeNumbers: false,
+                removeParenthesis: false,
+                removeSeparator: true,
+                quelisma: false,
+                includeBarredVParenthesis: true,
+                curlyDiphthongs: false,
+                repeatIntonation: false,
+                separateStanzas: false,
+                doElision: false,
+                ...testCase.parameters
+            };
+            const result = generateGabc(testCase.text, model as any, testParams);
             
             if (testCase.expectedInclude) {
                 testCase.expectedInclude.forEach(inc => {

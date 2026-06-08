@@ -6,6 +6,7 @@
   "scripts": {
     "test": "bun test",
     "test:visual": "bun test/visual-report.ts",
+    "build:cli": "bun run --filter=@augustinus/cli build",
     "start:frontend": "bun run --filter=augustinus-frontend dev",
     "start:cli": "bun run --filter=@augustinus/cli start",
     "start:api": "bun run --filter=@augustinus/api start"

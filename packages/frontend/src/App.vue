@@ -2,126 +2,73 @@
   <div class="app-container">
     <header>
       <div class="left-content">
-        <img src="/Saint_Augustine_by_Philippe_de_Champaigne.webp" alt="Saint Augustine" class="logo" />
+        <img src="/Saint_Augustine_by_Philippe_de_Champaigne.webp" alt="Saint Augustine Logo" class="logo" />
         <h1>Augustinus</h1>
       </div>
       <div id="docs">
-        <a href="https://github.com/AISCGre-BR/Augustinus/tree/main/docs">Acesse a documentação aqui</a>
+        <a href="https://github.com/AISCGre-BR/Augustinus/tree/main/docs" target="_blank" rel="noopener">
+          Acesse a documentação aqui
+        </a>
       </div>
     </header>
 
-    <main>
-      <div class="controls">
-        <details open>
-          <summary>Opções</summary>
-          <div class="options-grid">
-            <div class="option">
-              <label for="model">Modelo:</label>
-              <select id="model" v-model="selectedModelIndex" @change="onModelChange">
-                <option value="">-- Selecione um modelo --</option>
-                <option v-for="(model, index) in models" :key="index" :value="index">
-                  {{ model.name }}
-                </option>
-              </select>
-            </div>
+    <main class="main-layout">
+      <!-- Sidebar Control Column -->
+       
+      <section class="controls-sidebar">
+        <!-- Tabbed Text / GABC Metadata Editor -->
+        <TextEditor
+          v-model:inputText="inputText"
+          v-model:gabcOutput="gabcOutput"
+          v-model:header="header"
+          @update:gabcOutput="onGabcInput"
+        />
+        <!-- Structured Options Config Panel -->
+        <OptionsPanel
+          :models="models"
+          :psalmModels="psalmModels"
+          :generalParams="generalParams"
+          :psalmParams="psalmParams"
+          :customSimplesParams="customSimplesParams"
+          :customSoleneParams="customSoleneParams"
+          v-model:selectedModelIndex="selectedModelIndex"
+          v-model:selectedPsalmIndex="selectedPsalmIndex"
+          :selectedModel="selectedModel"
+          :parameters="parameters"
+          @update-param="updateParameter"
+        />
 
-            <!-- Dynamic General Options -->
-            <template v-for="param in generalParams" :key="param.key">
-              <div class="option">
-                <template v-if="param.type === 'boolean'">
-                  <input type="checkbox" :id="param.key" v-model="parameters[param.key as keyof Parameters]" />
-                  <label :for="param.key">{{ param.label }}</label>
-                </template>
-                <template v-else-if="param.type === 'string'">
-                  <label :for="param.key">{{ param.label }}:</label>
-                  <input type="text" :id="param.key" v-model="parameters[param.key as keyof Parameters]" />
-                </template>
-              </div>
-            </template>
-          </div>
+        
 
-          <!-- Dynamic Custom Options -->
-          <div v-if="selectedModel?.type === 'custom'" class="custom-options">
-            <div v-if="selectedModel?.tom === 'simples'" class="custom-group">
-              <template v-for="param in customSimplesParams" :key="param.key">
-                <label :for="param.key">{{ param.label }}:</label>
-                <template v-if="param.type === 'select'">
-                  <select :id="param.key" v-model="parameters[param.key as keyof Parameters]">
-                    <option v-for="opt in param.options" :key="opt.value" :value="opt.value">
-                      {{ opt.label }}
-                    </option>
-                  </select>
-                </template>
-                <template v-else>
-                  <input type="text" :id="param.key" v-model="parameters[param.key as keyof Parameters]" />
-                </template>
-              </template>
-            </div>
-            <div v-if="selectedModel?.tom === 'solene'" class="custom-group">
-              <template v-for="param in customSoleneParams" :key="param.key">
-                <label :for="param.key">{{ param.label }}:</label>
-                <template v-if="param.key === 'customPattern'">
-                  <textarea :id="param.key" rows="5" v-model="parameters[param.key as keyof Parameters]"></textarea>
-                </template>
-                <template v-else>
-                  <input type="text" :id="param.key" v-model="parameters[param.key as keyof Parameters]" />
-                </template>
-              </template>
-            </div>
-          </div>
+        <!-- Generate Action Button -->
+        <button class="btn-generate" @click="generate" :disabled="!inputText || !selectedModel">
+          Gerar Partitura
+        </button>
+      </section>
 
-          <div class="psalm-controls">
-            <h3>Opções dos salmos</h3>
-            <div class="option">
-              <label for="psalm">Salmodia:</label>
-              <select id="psalm" v-model="selectedPsalmIndex" @change="onPsalmChange">
-                <option value="">-- Selecione uma salmodia --</option>
-                <option v-for="(psalm, index) in psalmModels" :key="index" :value="index">
-                  {{ psalm.name }}
-                </option>
-              </select>
-            </div>
-            
-            <!-- Dynamic Psalm Options -->
-            <div v-for="param in psalmParams" :key="param.key" class="option">
-              <input type="checkbox" :id="param.key" v-model="parameters[param.key as keyof Parameters]" />
-              <label :for="param.key">{{ param.label }}</label>
-            </div>
-          </div>
-        </details>
+      <!-- Sheet Music Score Render Viewport -->
+      <section class="preview-pane">
+        <ChantPreview
+          ref="previewComponentRef"
+          :gabc="gabcOutput"
 
-        <label for="metadata">Metadados</label>
-        <textarea id="metadata" rows="5" v-model="header" spellcheck="false"></textarea>
 
-        <label for="input">Texto</label>
-        <textarea id="input" rows="10" v-model="inputText" spellcheck="false"></textarea>
-
-        <button id="generate" @click="generate">Gerar</button>
-
-        <div class="export-buttons">
-          <button @click="exportSvg">Exportar SVG</button>
-          <button @click="exportPng">Exportar PNG</button>
-          <button @click="exportPdf">Exportar PDF</button>
-        </div>
-
-        <label for="gabc">GABC</label>
-        <textarea id="gabc" rows="10" v-model="gabcOutput" @input="onGabcInput" spellcheck="false"></textarea>
-      </div>
-
-      <div class="output">
-        <div class="a4-container">
-          <div ref="chantContainer" class="chant-container"></div>
-        </div>
-      </div>
+        />
+      </section>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, watch, onMounted } from 'vue';
 import { GregorianChantSVGRenderer, GregorioScore, ChantContext } from '@testneumz/nabc-lib';
 import generateGabc, { defaultModels, parameterDefinitions, getDefaultParameters } from '@augustinus/core';
 import type { Model, Parameters } from '@augustinus/core';
+
+// Component imports
+import TextEditor from './components/TextEditor.vue';
+import OptionsPanel from './components/OptionsPanel.vue';
+import ChantPreview from './components/ChantPreview.vue';
 
 const models = defaultModels.filter((model) => model.type !== 'salmo');
 const psalmModels = defaultModels.filter((model) => model.type === 'salmo');
@@ -136,7 +83,8 @@ const selectedPsalmIndex = ref<number | string>('');
 const inputText = ref('');
 const header = ref('');
 const gabcOutput = ref('');
-const chantContainer = ref<HTMLDivElement | null>(null);
+
+const previewComponentRef = ref<InstanceType<typeof ChantPreview> | null>(null);
 let renderer: any = null;
 
 const parameters = reactive<Parameters>(getDefaultParameters());
@@ -151,18 +99,23 @@ const selectedModel = computed(() => {
   return null;
 });
 
-function onModelChange() {
-  if (selectedModelIndex.value !== '') {
+// Reactively watch model index selection to deselect counterpart psalm selection & configure custom templates
+watch(selectedModelIndex, (newVal) => {
+  if (newVal !== '') {
     selectedPsalmIndex.value = '';
     updateCustomFields();
   }
-}
+});
 
-function onPsalmChange() {
-  if (selectedPsalmIndex.value !== '') {
+watch(selectedPsalmIndex, (newVal) => {
+  if (newVal !== '') {
     selectedModelIndex.value = '';
     updateCustomFields();
   }
+});
+
+function updateParameter(key: string, value: any) {
+  (parameters as any)[key] = value;
 }
 
 function updateCustomFields() {
@@ -174,16 +127,17 @@ function updateCustomFields() {
 }
 
 function gabcToSvg(gabc: string) {
-  if (!chantContainer.value) return;
+  const chantContainer = previewComponentRef.value?.containerRef;
+  if (!chantContainer) return;
 
   const processedGabc = gabc.replaceAll(/\{([aeiou])~([aeiou]\})/gi, '{$1_$2}');
 
   if (!renderer) {
-    renderer = new GregorianChantSVGRenderer(chantContainer.value);
+    renderer = new GregorianChantSVGRenderer(chantContainer);
   }
 
   if (!processedGabc) {
-    chantContainer.value.innerHTML = '';
+    chantContainer.innerHTML = '';
     return;
   }
 
@@ -207,35 +161,150 @@ function generate() {
   gabcToSvg(gabc);
 }
 
-function onGabcInput() {
-  gabcToSvg(gabcOutput.value);
+function onGabcInput(gabc: string) {
+  gabcOutput.value = gabc;
+  gabcToSvg(gabc);
 }
 
-function exportSvg() { renderer?.exportSvg('chant.svg'); }
-function exportPng() { renderer?.exportPng('chant.png'); }
-function exportPdf() { renderer?.exportPdf('chant.pdf'); }
 
 onMounted(() => {
-  // Initial state
+  // Setup logic can remain here
 });
 </script>
 
 <style>
-/* Base styles from style.css are already loaded globally in main.ts */
-.custom-options {
-  margin-top: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+/* Global CSS variables, custom typography setup and clean layout structure */
+/*@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');*/
+
+:root {
+  --terracotta-color: #c85a32;
 }
-.custom-group {
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #1a1512;
+  color: #f4ecd8;
+  /* font-family: 'Inter', sans-serif; */
+}
+
+.app-container {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  min-height: 100vh;
 }
-.psalm-controls {
-  margin-top: 20px;
-  padding-top: 10px;
-  border-top: 1px solid #eee;
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #15110e;
+  border-bottom: 1px solid #2d231e;
+}
+
+header h1 {
+  /* font-family: 'Cinzel', serif; */
+  margin: 0;
+  font-size: 26px;
+  color: #f4ecd8;
+  letter-spacing: 0.5px;
+}
+
+.left-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--terracotta-color);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+#docs a {
+  /* font-family: 'Inter', sans-serif; */
+  color: var(--terracotta-color);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+#docs a:hover {
+  color: #de6b40;
+}
+
+/* Grid & Responsive Structure */
+.main-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.controls-sidebar {
+  width: 440px;
+  flex-shrink: 0;
+  background-color: #1c1714;
+  border-right: 1px solid #2d231e;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.preview-pane {
+  flex: 1;
+  padding: 24px;
+  background-color: #130f0c;
+  overflow-y: auto;
+}
+
+/* Primary Form Action Button */
+.btn-generate {
+  background-color: var(--terracotta-color);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  /* font-family: 'Inter', sans-serif; */
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  box-shadow: 0 4px 12px rgba(200, 90, 50, 0.2);
+}
+
+.btn-generate:hover:not(:disabled) {
+  background-color: #de6b40;
+}
+
+.btn-generate:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn-generate:disabled {
+  background-color: #312722;
+  color: #5c4e46;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+  .main-layout {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .controls-sidebar {
+    width: 100%;
+    box-sizing: border-box;
+    border-right: none;
+    border-bottom: 1px solid #2d231e;
+    overflow-y: visible;
+  }
 }
 </style>

@@ -24,6 +24,16 @@ export function applyModel(lyrics: string, gabcModel: string, psalm: boolean, do
         return placeholder;
     });
 
+    const stackedParts: string[] = [];
+    const stackedPlaceholder = "||STACKEDPART||";
+
+    deTaggedLyrics = deTaggedLyrics.replace(/\[([^\]]+)\]/g, (match, content) => {
+        const lines = content.split('/');
+        const stackedContent = lines.map(line => `\\vphantom{dp}${line}`).join('&');
+        stackedParts.push(`<v>\\stacktext{${stackedContent}}</v>`);
+        return stackedPlaceholder;
+    });
+
     let wordsWithNotePlaceholders: string[] = deTaggedLyrics.split(/\s+/).filter(w => w).map(word => {
         const processToken = (token: string) => {
             if (token === placeholder) {
@@ -32,13 +42,17 @@ export function applyModel(lyrics: string, gabcModel: string, psalm: boolean, do
             if (token === specialPlaceholder) {
                 return specialTaggedParts.shift() || "";
             }
+            if (token === stackedPlaceholder) {
+                return (stackedParts.shift() || "") + "@";
+            }
             if (!/[a-zA-Z\u00C0-\u00FF]/i.test(token)) {
                 return token;
             }
             const syllableArray = syllable(token).split(/(?<=@)/);
             const tonicIndex = syllableArray.length - tonic(syllableArray);
             const result = syllableArray.map((s, i) => {
-                const isUnstressed = unstressedMonosyllables.includes(s);
+                const cleanSyllable = s.replace(/[^a-zA-Z\u00C0-\u00FF]/g, "").toLowerCase();
+                const isUnstressed = unstressedMonosyllables.includes(cleanSyllable);
                 let processedSyllable = (i === tonicIndex && !isUnstressed) ? "#" + s : s;
                 if (curlyDiphthongs) {
                     processedSyllable = processedSyllable.replace(diphthongRegex, "{$1$2}");
@@ -48,8 +62,8 @@ export function applyModel(lyrics: string, gabcModel: string, psalm: boolean, do
             return result;
         }
 
-        if (word.includes(placeholder) || word.includes(specialPlaceholder)) {
-            return word.split(/(\|\|TAGGEDPART\|\||\|\|SPECIALTAGGEDPART\|\|)/).filter(t => t).map(processToken).join("");
+        if (word.includes(placeholder) || word.includes(specialPlaceholder) || word.includes(stackedPlaceholder)) {
+            return word.split(/(\|\|TAGGEDPART\|\||\|\|SPECIALTAGGEDPART\|\||\|\|STACKEDPART\|\|)/).filter(t => t).map(processToken).join("");
         }
         return processToken(word);
     });

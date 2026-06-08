@@ -1,9 +1,10 @@
-import { Model, Parameters } from "./types/index.js";
+import { Model, Parameters, getDefaultParameters } from "./types/index.js";
 import { preprocessInput, handleCustomModel } from "./core/parameters.js";
 import { applyModel } from "./modules/apply-model.js";
 import defaultModels from '../assets/models.json' with { type: 'json' };
 
-export default function generateGabc(input: string, modelObject: Model, parametersObject: Parameters): string {
+export default function generateGabc(input: string, modelObject: Model, partialParameters: Partial<Parameters> = {}): string {
+    const parametersObject = { ...getDefaultParameters(), ...partialParameters };
     let model = handleCustomModel(modelObject, parametersObject);
     let psalm = model.type === "salmo" ? true : false;
 

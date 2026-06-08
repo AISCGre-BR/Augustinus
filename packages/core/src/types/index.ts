@@ -23,14 +23,14 @@ export type ParameterType = 'boolean' | 'string' | 'select';
 export const parameterDefinitions = [
     // GENERAL - OBLIGATORY/COMMON FIRST
     { key: 'separator', label: 'Separador', type: 'string', group: 'general', defaultValue: '.' },
-    { key: 'addOptionalStart', label: 'Adicionar começo', type: 'boolean', group: 'general', defaultValue: true },
-    { key: 'addOptionalEnd', label: 'Adicionar final', type: 'boolean', group: 'general', defaultValue: true },
+    { key: 'addOptionalStart', label: 'Adicionar começo', type: 'boolean', group: 'general', defaultValue: false },
+    { key: 'addOptionalEnd', label: 'Adicionar final', type: 'boolean', group: 'general', defaultValue: false },
     { key: 'removeNumbers', label: 'Remover números', type: 'boolean', group: 'general', defaultValue: true },
     { key: 'removeParenthesis', label: 'Remover parênteses', type: 'boolean', group: 'general', defaultValue: true },
     { key: 'removeSeparator', label: 'Remover separador', type: 'boolean', group: 'general', defaultValue: false },
     { key: 'quelisma', label: 'Quelisma no prefácio (experimental)', type: 'boolean', group: 'general', defaultValue: false },
     { key: 'includeBarredVParenthesis', label: 'Incluir () após o ℣ barrado', type: 'boolean', group: 'general', defaultValue: false },
-    { key: 'curlyDiphthongs', label: 'Incluir {} em ditongos', type: 'boolean', group: 'general', defaultValue: true },
+    { key: 'curlyDiphthongs', label: 'Incluir {} em ditongos', type: 'boolean', group: 'general', defaultValue: false },
 
     // PSALMS
     { key: 'repeatIntonation', label: 'Repetir entonação', type: 'boolean', group: 'psalm', defaultValue: true },

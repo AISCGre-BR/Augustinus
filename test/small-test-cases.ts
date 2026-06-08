@@ -5,7 +5,7 @@ export interface TestCase {
     description: string;
     text: string;
     model: string;
-    parameters: Parameters;
+    parameters: Partial<Parameters>;
     expectedInclude?: string[];
     expectedExclude?: string[];
 }
@@ -225,5 +225,45 @@ export const smallTestCases: TestCase[] = [
         model: "Oração tom solene",
         parameters: { separator: "." },
         expectedInclude: ["<b>Deus(h) to(h)do(h)</b>"]
+    },
+    {
+        id: "case-insensitive-monosyllables",
+        description: "Monossilábico com maiúscula (De) deve ser tratado como átono",
+        text: "De Deus.",
+        model: "Prefácio tom simples",
+        parameters: { separator: ".", removeSeparator: false },
+        expectedInclude: ["De(f) Deus.(gf)"]
+    },
+    {
+        id: "monosyllable-punctuation",
+        description: "Monossilábico com pontuação (de,) deve ser tratado como átono",
+        text: "Senhor de, Deus.",
+        model: "Prefácio tom simples",
+        parameters: { separator: ".", removeSeparator: false },
+        expectedInclude: ["de,(f) Deus.(gf)"]
+    },
+    {
+        id: "stack-2-lines",
+        description: "Suporte a texto multi-linha (2 linhas)",
+        text: "[top/bottom]ta",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["\\stacktext{\\vphantom{dp}top&\\vphantom{dp}bottom}"]
+    },
+    {
+        id: "stack-3-lines",
+        description: "Suporte a texto multi-linha (3 linhas)",
+        text: "[top/middle/bottom]ta",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["\\stacktext{\\vphantom{dp}top&\\vphantom{dp}middle&\\vphantom{dp}bottom}"]
+    },
+    {
+        id: "stack-4-lines",
+        description: "Suporte a texto multi-linha (4 linhas)",
+        text: "[one/two/three/four]ta",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["\\stacktext{\\vphantom{dp}one&\\vphantom{dp}two&\\vphantom{dp}three&\\vphantom{dp}four}"]
     }
 ];

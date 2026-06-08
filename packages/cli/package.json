@@ -10,6 +10,7 @@
   },
   "scripts": {
     "start": "bun run src/cli.ts",
+    "build": "tsc && chmod +x dist/cli.js",
     "prepublishOnly": "tsc"
   },
   "dependencies": {
