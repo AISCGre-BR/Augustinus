@@ -1,0 +1,64 @@
+\usepackage{gregoriotex}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage{libertine}
+\usepackage[varqu]{zi4} % Inconsolata para código monoespaçado
+\usepackage[hidelinks]{hyperref}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{paracol}
+\usepackage{xurl}
+\usepackage{stackengine}
+\usepackage{augustinus}
+
+\geometry{margin=2cm}
+
+% Configuração para o bloco de código GABC
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% Macro genérica para imprimir código GABC
+\newcommand{\printgabc}[2][footnotesize]{%
+    \vspace{0.3em}%
+    \noindent\fcolorbox{codegray}{backcolour}{%
+        \parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{%
+            \raggedright\csname #1\endcsname\expandafter\path\expandafter{\detokenize{#2}}%
+        }%
+    }%
+    \vspace{0.5em}%
+}
+
+% Macro para teste simples
+\newcommand{\rendersmalltest}[5]{
+    \subsection{#1}
+    \textbf{ID:} \texttt{#2} \quad \textbf{Modelo:} #3 \\
+    \textbf{Texto:} ``#4'' \\
+    \textbf{Código GABC:} \par
+    \printgabc{#5}
+    \vspace{0.5em}
+    \gabcsnippet{#5}
+    \vspace{1em}
+    \hrule
+}
+
+% Macro para teste lado a lado
+\newcommand{\rendersidebyside}[5]{
+    \subsection{Parâmetro: #1}
+    \begin{minipage}[t]{0.48\textwidth}
+        \textbf{TRUE} (#2)\\
+        \printgabc{#3}
+        \vspace{0.5em}
+        \gabcsnippet{#3}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \textbf{FALSE} (#4)\\
+        \printgabc{#5}
+        \vspace{0.5em}
+        \gabcsnippet{#5}
+    \end{minipage}
+    \vspace{1em}
+    \hrule
+}

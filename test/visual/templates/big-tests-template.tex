@@ -1,35 +1,11 @@
-\documentclass[a4paper]{article}
-\usepackage{gregoriotex}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[portuguese]{babel}
-\usepackage{geometry}
-\usepackage{xcolor} % Suporte a cores
-\usepackage{paracol} % Permite colunas lado a lado que quebram página
-\usepackage{xurl} % Permite quebra de linha do GABC em qualquer caractere
-\usepackage{stackengine}
-\stackText
-\setstackEOL{&}
-\newcommand{\stacktext}[1]{{\Shortunderstack[c]{#1}}}
-\geometry{margin=1.5cm}
+\documentclass[12pt, a4paper]{article}
+\input{../templates/preamble.sty}
 
 \title{Comparativo: {{TITLE}}}
 \date{\today}
 
 % Configuração correta das colunas no paracol:
-% Define duas colunas de exatamente 48% da largura da página cada.
-% O espaço restante de 4% é calculado automaticamente como o espaçamento central (gutter).
 \setcolumnwidth{0.48\textwidth, 0.48\textwidth}
-
-% Configuração para o bloco de código GABC seguro contra estouros de margem
-\definecolor{codebg}{gray}{0.95}
-\newcommand{\printgabc}[1]{%
-    \vspace{0.3em}%
-    \noindent\colorbox{codebg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-        \scriptsize\expandafter\path\expandafter{\detokenize{#1}}%
-    }}%
-    \vspace{0.5em}%
-}
 
 \begin{document}
 \maketitle
@@ -43,14 +19,14 @@
 % Iniciamos o ambiente de duas colunas paralelas que suporta quebras de página
 \begin{paracol}{2}
     \section*{Referência (Manual/Existente)}
-    \printgabc{{{REFERENCE_GABC}}}
+    \printgabc[scriptsize]{{{REFERENCE_GABC}}}
     \vspace{0.5em}
     \gabcsnippet{{{REFERENCE_GABC}}}
 
     \switchcolumn % Transiciona para a coluna da direita
 
     \section*{Augustinus (Gerado)}
-    \printgabc{{{AUGUSTINUS_GABC}}}
+    \printgabc[scriptsize]{{{AUGUSTINUS_GABC}}}
     \vspace{0.5em}
     \gabcsnippet{{{AUGUSTINUS_GABC}}}
 \end{paracol}

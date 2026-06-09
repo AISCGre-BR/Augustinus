@@ -248,7 +248,7 @@ export const smallTestCases: TestCase[] = [
         text: "[cima/baixo] assim",
         model: "Oração tom solene",
         parameters: { separator: "." },
-        expectedInclude: ["\\stacktext{\\vphantom{dp}cima&\\vphantom{dp}baixo}"]
+        expectedInclude: ["\\stacktext{cima}{baixo}"]
     },
     {
         id: "stack-3-lines",
@@ -256,7 +256,7 @@ export const smallTestCases: TestCase[] = [
         text: "[cima/meio/baixo] assim",
         model: "Oração tom solene",
         parameters: { separator: "." },
-        expectedInclude: ["\\stacktext{\\vphantom{dp}cima&\\vphantom{dp}meio&\\vphantom{dp}baixo}"]
+        expectedInclude: ["\\stacktext{cima}{meio}{baixo}"]
     },
     {
         id: "stack-4-lines",
@@ -264,6 +264,14 @@ export const smallTestCases: TestCase[] = [
         text: "[um/dois/três/quatro] assim",
         model: "Oração tom solene",
         parameters: { separator: "." },
-        expectedInclude: ["\\stacktext{\\vphantom{dp}um&\\vphantom{dp}dois&\\vphantom{dp}três&\\vphantom{dp}quatro}"]
+        expectedInclude: ["\\stacktext{um}{dois}{três}{quatro}"]
+    },
+    {
+        id: "stack-epenthesis",
+        description: "Epêntese em texto empilhado (topo vazio)",
+        text: "[/baixo] assim",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["\\stacktext{}{baixo}", "(gr)"]
     }
 ];

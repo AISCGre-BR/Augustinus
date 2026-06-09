@@ -24,13 +24,17 @@ export function applyModel(lyrics: string, gabcModel: string, psalm: boolean, do
         return placeholder;
     });
 
-    const stackedParts: string[] = [];
+    const stackedParts: { text: string; isEpenthesis: boolean }[] = [];
     const stackedPlaceholder = "||STACKEDPART||";
 
     deTaggedLyrics = deTaggedLyrics.replace(/\[([^\]]+)\]/g, (match, content) => {
         const lines = content.split('/');
-        const stackedContent = lines.map(line => `\\vphantom{dp}${line}`).join('&');
-        stackedParts.push(`<v>\\stacktext{${stackedContent}}</v>`);
+        const isEpenthesis = lines[0] === "";
+        const stackedContent = lines.join('}{');
+        stackedParts.push({
+            text: `{<v>\\stacktext{${stackedContent}}</v>}`,
+            isEpenthesis: isEpenthesis
+        });
         return stackedPlaceholder;
     });
 
@@ -43,7 +47,9 @@ export function applyModel(lyrics: string, gabcModel: string, psalm: boolean, do
                 return specialTaggedParts.shift() || "";
             }
             if (token === stackedPlaceholder) {
-                return (stackedParts.shift() || "") + "@";
+                const part = stackedParts.shift();
+                if (!part) return "";
+                return part.text + (part.isEpenthesis ? "@!" : "@");
             }
             if (!/[a-zA-Z\u00C0-\u00FF]/i.test(token)) {
                 return token;
@@ -224,5 +230,11 @@ export function applyModel(lyrics: string, gabcModel: string, psalm: boolean, do
 
     gabcOutput = gabcOutput.replaceAll("@", extractedTripletRootNote);
     gabcOutput = gabcOutput.replaceAll("#", "");
+
+    // Convert epenthesis markers to GABC epenthesis notes
+    gabcOutput = gabcOutput.replace(/(\([^)]+\))!/g, (match, note) => {
+        return note.replace(/\)$/, "r)");
+    });
+
     return gabcOutput;
 }

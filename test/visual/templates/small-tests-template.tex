@@ -1,64 +1,8 @@
-\documentclass[a4paper]{article}
-\usepackage{gregoriotex}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[portuguese]{babel}
-\usepackage{geometry}
-\usepackage{xcolor}
-\usepackage{stackengine}
-\stackText
-\setstackEOL{&}
-\newcommand{\stacktext}[1]{{\Shortunderstack[c]{#1}}}
-\geometry{margin=2cm}
-
+\documentclass[12pt, a4paper]{article}
+\input{../templates/preamble.sty}
 \title{Relatório de Testes Unitários - Augustinus}
 \author{Sistema de Testes Automatizado}
 \date{\today}
-
-% Configuração para o bloco de código GABC
-\definecolor{codebg}{gray}{0.95}
-\newcommand{\printgabc}[1]{%
-    \vspace{0.3em}%
-    \noindent\colorbox{codebg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\footnotesize\ttfamily\detokenize{#1}}}%
-    \vspace{0.5em}%
-}
-
-% Macro para teste simples
-% #1: Descrição, #2: ID, #3: Modelo, #4: Texto, #5: GABC
-\newcommand{\rendersmalltest}[5]{
-    \subsection{#1}
-    \textbf{ID:} \texttt{#2} \quad \textbf{Modelo:} #3 \\
-    \textbf{Texto:} ``#4'' \\
-    \textbf{Código GABC:}
-    \printgabc{#5}
-    \vspace{0.5em}
-    \gabcsnippet{#5}
-    \vspace{1em}
-    \hrule
-}
-
-% Macro para teste lado a lado (parâmetros)
-% #1: Nome do Parâmetro, #2: ID True, #3: GABC True, #4: ID False, #5: GABC False
-\newcommand{\rendersidebyside}[5]{
-    \subsection{Parâmetro: #1}
-    \begin{minipage}[t]{0.48\textwidth}
-        % \centering
-        \textbf{TRUE} (#2)\\
-        \printgabc{#3}
-        \vspace{0.5em}
-        \gabcsnippet{#3}
-    \end{minipage}
-    \hfill
-    \begin{minipage}[t]{0.48\textwidth}
-        % \centering
-        \textbf{FALSE} (#4)\\
-        \printgabc{#5}
-        \vspace{0.5em}
-        \gabcsnippet{#5}
-    \end{minipage}
-    \vspace{1em}
-    \hrule
-}
 
 \begin{document}
 \gresetinitiallines{0}

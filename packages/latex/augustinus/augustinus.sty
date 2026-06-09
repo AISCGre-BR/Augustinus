@@ -1,0 +1,34 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{augustinus}[Augustinus Rendering Macros]
+
+\RequirePackage{stackengine}
+\RequirePackage{xparse}
+
+% Default settings for stacking in Augustinus
+\stackText
+\setstackgap{S}{0pt}
+\setstackEOL{+}
+
+\ExplSyntaxOn
+\tl_new:N \l__stacktext_tl
+\cs_new_protected:Npn \__stacktext_do:n #1 { \Shortunderstack[c]{#1} }
+\cs_new_protected:Npn \__stacktext_collect_arg:n #1
+  {
+    \tl_if_empty:NF \l__stacktext_tl { \tl_put_right:Nn \l__stacktext_tl { + } }
+    \tl_put_right:Nn \l__stacktext_tl { \vphantom{bdfghijklpqty}#1 }
+    \__stacktext_collect:
+  }
+\cs_new_protected:Npn \__stacktext_collect:
+  {
+    \peek_catcode_ignore_spaces:NTF \c_group_begin_token
+      { \__stacktext_collect_arg:n }
+      { \exp_after:wN \__stacktext_do:n \exp_after:wN { \l__stacktext_tl } }
+  }
+\NewDocumentCommand \stacktext { }
+  {
+    \tl_clear:N \l__stacktext_tl
+    \__stacktext_collect:
+  }
+\ExplSyntaxOff
+
+\endinput
