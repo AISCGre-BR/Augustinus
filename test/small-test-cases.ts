@@ -273,5 +273,42 @@ export const smallTestCases: TestCase[] = [
         model: "Oração tom solene",
         parameters: { separator: "." },
         expectedInclude: ["\\stacktext{}{baixo}", "(gr)"]
+    },
+    {
+        id: "auto-stack-true",
+        description: "Auto-separação de sílabas em empilhamento: TRUE",
+        text: "[Benedictus/Benedictus] Dominus",
+        model: "Oração tom solene",
+        parameters: { separator: ".", autoStack: true },
+        expectedInclude: [
+            "\\stacktext{Be-}{Be-}",
+            "\\stacktext{ne-}{ne-}",
+            "\\stacktext{dic-}{dic-}",
+            "\\stacktext{tus}{tus}"
+        ]
+    },
+    {
+        id: "auto-stack-false",
+        description: "Auto-separação de sílabas em empilhamento: FALSE",
+        text: "[Benedictus/Benedictus] Dominus",
+        model: "Oração tom solene",
+        parameters: { separator: ".", autoStack: false },
+        expectedInclude: ["\\stacktext{Benedictus}{Benedictus}"]
+    },
+    {
+        id: "auto-stack-hyphen-bug",
+        description: "Auto-stack: Sem hífen na última sílaba de palavras curtas no stack",
+        text: "[Benedictus/Bene] Dominus",
+        model: "Oração tom solene",
+        parameters: { separator: ".", autoStack: true },
+        expectedInclude: ["\\stacktext{ne-}{ne}"]
+    },
+    {
+        id: "auto-stack-epenthesis-bug",
+        description: "Auto-stack: Notas de epêntese quando o primeiro grupo é mais curto",
+        text: "[Bene/Benedictus] Dominus",
+        model: "Oração tom solene",
+        parameters: { separator: ".", autoStack: true },
+        expectedInclude: ["\\stacktext{ne}{ne-}", "\\stacktext{}{dic-}</v>}(hr)", "\\stacktext{}{tus}</v>}(hr)"]
     }
 ];

@@ -31,6 +31,7 @@ export const parameterDefinitions = [
     { key: 'quelisma', label: 'Quelisma no prefácio (experimental)', type: 'boolean', group: 'general', defaultValue: false },
     { key: 'includeBarredVParenthesis', label: 'Incluir () após o ℣ barrado', type: 'boolean', group: 'general', defaultValue: false },
     { key: 'curlyDiphthongs', label: 'Incluir {} em ditongos', type: 'boolean', group: 'general', defaultValue: false },
+    { key: 'autoStack', label: 'Auto-separação de sílabas em empilhamento', type: 'boolean', group: 'general', defaultValue: false },
 
     // PSALMS
     { key: 'repeatIntonation', label: 'Repetir entonação', type: 'boolean', group: 'psalm', defaultValue: true },

@@ -2,7 +2,7 @@ import { syllable, tonic } from "separador-silabas";
 import { replaceFromEnd } from "../utils/text-utils.js";
 import { psalmLogic } from "./psalm-logic.js";
 
-export function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision?: boolean, curlyDiphthongs?: boolean): string {
+export function applyModel(lyrics: string, gabcModel: string, psalm: boolean, doElision?: boolean, curlyDiphthongs?: boolean, autoStack?: boolean): string {
     lyrics = lyrics.normalize("NFC");
     const vowels = "aeiouáéíóúâêîôûãõàèìòùäëïöü";
     const diphthongRegex = new RegExp(`([${vowels}])([${vowels}])`, "gi");
@@ -24,17 +24,50 @@ export function applyModel(lyrics: string, gabcModel: string, psalm: boolean, do
         return placeholder;
     });
 
-    const stackedParts: { text: string; isEpenthesis: boolean }[] = [];
+    const stackedParts: { text: string; hasInternalNotes: boolean; isEpenthesis: boolean }[] = [];
     const stackedPlaceholder = "||STACKEDPART||";
 
     deTaggedLyrics = deTaggedLyrics.replace(/\[([^\]]+)\]/g, (match, content) => {
-        const lines = content.split('/');
+        let lines = content.split('/');
         const isEpenthesis = lines[0] === "";
-        const stackedContent = lines.join('}{');
-        stackedParts.push({
-            text: `{<v>\\stacktext{${stackedContent}}</v>}`,
-            isEpenthesis: isEpenthesis
-        });
+        
+        if (autoStack) {
+            const syllabifiedLines = lines.map(line => 
+                line.split(/\s+/).map(word => syllable(word).split("@"))
+            );
+            
+            const numWords = Math.max(...syllabifiedLines.map(l => l.length));
+            let resultParts = [];
+            
+            for (let w = 0; w < numWords; w++) {
+                const numSyllables = Math.max(...syllabifiedLines.map(l => l[w] ? l[w].length : 0));
+                for (let s = 0; s < numSyllables; s++) {
+                    const stackedContent = syllabifiedLines.map(lineWords => {
+                        const wordSyllables = lineWords[w] || [];
+                        const syl = wordSyllables[s] || "";
+                        const isLastInWord = s >= wordSyllables.length - 1;
+                        return syl + (isLastInWord || syl === "" ? "" : "-");
+                    }).join('}{');
+                    
+                    const isSyllableEpenthesis = isEpenthesis || !syllabifiedLines[0][w] || !syllabifiedLines[0][w][s];
+                    resultParts.push(`{<v>\\stacktext{${stackedContent}}</v>}${isSyllableEpenthesis ? "@!" : "@"}`);
+                }
+                if (w < numWords - 1) resultParts.push(" ");
+            }
+            
+            stackedParts.push({
+                text: resultParts.join(""),
+                hasInternalNotes: true,
+                isEpenthesis: false
+            });
+        } else {
+            const stackedContent = lines.join('}{');
+            stackedParts.push({
+                text: `{<v>\\stacktext{${stackedContent}}</v>}`,
+                hasInternalNotes: false,
+                isEpenthesis: isEpenthesis
+            });
+        }
         return stackedPlaceholder;
     });
 
@@ -49,6 +82,7 @@ export function applyModel(lyrics: string, gabcModel: string, psalm: boolean, do
             if (token === stackedPlaceholder) {
                 const part = stackedParts.shift();
                 if (!part) return "";
+                if (part.hasInternalNotes) return part.text;
                 return part.text + (part.isEpenthesis ? "@!" : "@");
             }
             if (!/[a-zA-Z\u00C0-\u00FF]/i.test(token)) {

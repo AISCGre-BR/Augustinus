@@ -51,7 +51,7 @@ export default function generateGabc(input: string, modelObject: Model, partialP
             if (replacement !== undefined) {
                 gabcLines.push(replacement);
             } else {
-                gabcLines.push(applyModel(chunk, model.default, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs));
+                gabcLines.push(applyModel(chunk, model.default, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs, parametersObject.autoStack));
             }
             continue;
         }
@@ -60,11 +60,11 @@ export default function generateGabc(input: string, modelObject: Model, partialP
         const pattern = model.patterns.find(p => p.symbol === lastChar);
         if (pattern) {
             const text = model.type === 'leitura' ? chunk.trim() : chunk.slice(0, -1).trim();
-            gabcLines.push(applyModel(text, pattern.gabc, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs))
+            gabcLines.push(applyModel(text, pattern.gabc, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs, parametersObject.autoStack))
         } else {
             const trimmedChunk = chunk.trim();
             const needsSeparator = parametersObject.removeSeparator === false && !/[.,;:!?]/.test(trimmedChunk.slice(-1));
-            gabcLines.push(applyModel(trimmedChunk + (needsSeparator ? parametersObject.separator : ''), model.default, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs));
+            gabcLines.push(applyModel(trimmedChunk + (needsSeparator ? parametersObject.separator : ''), model.default, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs, parametersObject.autoStack));
         }
     }
 
