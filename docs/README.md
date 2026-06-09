@@ -7,6 +7,7 @@ Esta documentação ainda está *no processo de desenvolvimento*. Caso deseje qu
 # Sumário
 
 - [Informações gerais]()
+- [Funcionalidades](./features.md)
 - [Guia básico]()
 - [Guia avançado]()
 

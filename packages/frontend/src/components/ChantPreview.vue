@@ -30,6 +30,14 @@
         <div ref="containerRef" class="chant-container"></div>
       </div>
     </div>
+
+    <!-- Disclaimer Section -->
+    <div class="rendering-disclaimer no-print">
+      <p>
+        <strong>Nota:</strong> O empilhamento de texto (ex: <code>[texto/outro]</code>) pode não ser renderizado corretamente nesta pré-visualização. 
+        Para um resultado profissional, utilize o código GABC gerado em conjunto com o pacote LaTeX <code>augustinus</code>.
+      </p>
+    </div>
   </div>
 </template>
 
@@ -156,6 +164,32 @@ function triggerPrint() {
 .svg-btn { background-color: #3a2f29; }
 .png-btn { background-color: #58483e; }
 .pdf-btn { background-color: #c85a32; }
+
+.rendering-disclaimer {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background-color: #2d231e;
+  border-left: 4px solid #c85a32;
+  border-radius: 4px;
+}
+
+.rendering-disclaimer p {
+  margin: 0;
+  font-size: 13px;
+  color: #a3958d;
+  line-height: 1.5;
+}
+
+.rendering-disclaimer strong {
+  color: #f4ecd8;
+}
+
+.rendering-disclaimer code {
+  background-color: #1c1714;
+  padding: 2px 4px;
+  border-radius: 3px;
+  color: #c85a32;
+}
 
 /* Visualizer Viewport */
 .output {

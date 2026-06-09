@@ -9,6 +9,7 @@ Augustinus is a monorepo managed with **Bun** and **Vite**. It is split into thr
 -   `packages/core`: The musical engine that transforms text into GABC notation.
 -   `packages/frontend`: A Vue 3 web application for interactive use.
 -   `packages/cli`: (Future/Placeholder) A command-line interface for batch processing.
+-   `packages/latex`: A LaTeX package providing macros for stacking and musical formatting.
 
 ---
 
@@ -44,7 +45,16 @@ The frontend is a modern **Vue 3** application using the **Composition API**.
 
 ---
 
-## 3. Testing System (`test/`)
+## 3. LaTeX Package (`packages/latex`)
+
+A temporary package that defines macros for use with `stackengine`.
+
+-   **Purpose**: Provides the `\stacktext` and other related macros used by Augustinus' stacking feature.
+-   **Structure**: Contains the `augustinus.sty` file and an installation script.
+
+---
+
+## 4. Testing System (`test/`)
 
 Augustinus maintains high reliability through a two-tier testing system:
 
@@ -61,4 +71,4 @@ To add a new parameter to Augustinus:
 1.  Add the definition to `packages/core/src/types/index.ts`.
 2.  Implement the logic in the relevant module in `packages/core/src/modules/`.
 3.  The UI will update automatically.
-4.  Add a test case to `packages/core/src/small-test-cases.ts` and run `bun test`.
+4.  Add a test case to `test/small-test-cases.ts` and run `bun test`.

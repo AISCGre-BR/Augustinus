@@ -199,7 +199,7 @@ textarea {
   background-color: #1a1512;
   border: 1px solid #3d312a;
   color: #f4ecd8;
-  /* font-family: 'Inter', sans-serif; */
+  font-family: 'Fira Code', 'Courier New', monospace;
   font-size: 14px;
   padding: 12px;
   border-radius: 6px;

@@ -31,6 +31,10 @@ Uma interface de linha de comando para usar a funcionalidade de geração de GAB
 
 Uma interface web amigável para o Augustinus. Permite que você insira texto, selecione um modelo e veja o GABC gerado e sua renderização SVG em tempo real.
 
+### `@augustinus/latex`
+
+Um pacote LaTeX que fornece as macros necessárias (como `\stacktext`) para renderizar corretamente as partes empilhadas do Augustinus em documentos LaTeX, utilizando o pacote `stackengine`.
+
 ## Começando
 
 ### Uso comum

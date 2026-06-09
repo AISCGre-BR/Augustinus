@@ -100,7 +100,7 @@
       </div>
 
       <!-- Group 4: Psalm Controls -->
-      <div class="parameter-group-card">
+      <div v-if="selectedModel?.name === 'Salmo' || selectedModel?.type === 'salmo'" class="parameter-group-card">
         <div class="group-title">Configurações de Salmodia</div>
         <div class="option-field mb-3">
           <label for="psalm">Salmo:</label>
