@@ -199,7 +199,11 @@ function triggerPrint() {
   border-radius: 8px;
   padding: 32px;
   display: flex;
-  justify-content: center;
+  /* "safe center" centraliza a partitura quando ela cabe, mas alinha à esquerda
+     quando ela é mais larga que a área visível (telas estreitas / sidebar de 440px).
+     Com "center" simples, a borda esquerda (clave e início das linhas) transborda
+     para um scroll negativo, ficando cortada e inacessível à rolagem. */
+  justify-content: safe center;
   align-items: flex-start;
   max-height: 800px;
   min-height: 600px;
@@ -210,6 +214,7 @@ function triggerPrint() {
   background-color: #ffffff;
   width: 210mm;
   min-height: 297mm;
+  flex-shrink: 0;
   padding: 20mm;
   box-sizing: border-box;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);

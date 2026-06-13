@@ -124,6 +124,10 @@ function updateCustomFields() {
 
   parameters.customStart = model.start || '(c3) <sp>V/</sp> ';
   parameters.customPattern = model.default || '(g) (gr gr gr) (fe) (ef) (g) (fgr1) (fr) (f) (:)';
+
+  // Prefácios usam "**" como marcador de cadência final (para não confundir com a
+  // pontuação); os demais modelos usam o separador padrão ".".
+  parameters.separator = model.type === 'prefacio' ? '**' : '.';
 }
 
 function gabcToSvg(gabc: string) {
@@ -143,6 +147,16 @@ function gabcToSvg(gabc: string) {
 
   try {
     const context = new ChantContext();
+
+    // A lib quebra as linhas em context.lineWidthPx (padrão 800px), mas o SVG é
+    // renderizado com width:100% e sem viewBox — então qualquer conteúdo além da
+    // largura do contêiner é cortado. Casamos a largura de quebra com a largura
+    // real do papel para a partitura caber e não ser cortada à direita.
+    const containerWidth = chantContainer.clientWidth;
+    if (containerWidth > 0) {
+      context.lineWidthPx = containerWidth;
+    }
+
     const score = new GregorioScore(context);
     score.interprete(processedGabc);
     renderer.renderSvg(score);
