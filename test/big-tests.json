@@ -37,7 +37,7 @@
     "text": "source/prefacio.txt",
     "reference": "references/prefacio-tom-simples.gabc",
     "model": "Prefácio tom simples",
-    "parameters": { "separator": ".", "removeSeparator": false, "removeParenthesis": true }
+    "parameters": { "separator": "**", "removeSeparator": false, "removeParenthesis": true }
   },
   {
     "id": "prefacio-solene",
@@ -45,6 +45,6 @@
     "text": "source/prefacio.txt",
     "reference": "references/prefacio-tom-solene.gabc",
     "model": "Prefácio tom solene",
-    "parameters": { "separator": ".", "removeSeparator": false, "removeParenthesis": true }
+    "parameters": { "separator": "**", "removeSeparator": false, "removeParenthesis": true }
   }
 ]

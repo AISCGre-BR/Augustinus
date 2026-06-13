@@ -16,16 +16,23 @@ export default function generateGabc(input: string, modelObject: Model, partialP
         return `__SPECIAL_TAG_PLACEHOLDER_${specialTags.length - 1}__`;
     });
 
+    // Use an internal delimiter to mark chunk boundaries. This decouples the
+    // user-facing separator string (e.g. "**") from the chunk-splitting logic,
+    // so a separator that shares characters with a pattern symbol (e.g. "*")
+    // does not collide during splitting.
+    const DELIM = "\u0000";
+    input = input.replaceAll(parametersObject.separator, DELIM);
+
     for (let i = 0; i < model.patterns.length; i++) {
         const symbol: string = model.patterns[i].symbol;
-        input = input.replaceAll(symbol, symbol + parametersObject.separator);
+        input = input.replaceAll(symbol, symbol + DELIM);
     }
 
     if (model.type === "prefacio" && model.tom === "solene") {
-        input = input.replaceAll("Por isso,", "Por isso," + parametersObject.separator);
+        input = input.replaceAll("Por isso,", "Por isso," + DELIM);
     }
 
-    const chunks: string[] = input.split(parametersObject.separator).map(s => s.trim()).filter(chunk => {
+    const chunks: string[] = input.split(DELIM).map(s => s.trim()).filter(chunk => {
         if (!chunk || chunk === parametersObject.separator) return false;
         const lastChar = chunk.slice(-1);
         const pattern = model.patterns.find(p => p.symbol === lastChar);

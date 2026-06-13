@@ -27,7 +27,7 @@ export function applyModel(lyrics: string, gabcModel: string, psalm: boolean, do
     const stackedParts: { text: string; hasInternalNotes: boolean; isEpenthesis: boolean }[] = [];
     const stackedPlaceholder = "||STACKEDPART||";
 
-    deTaggedLyrics = deTaggedLyrics.replace(/\[([^\]]+)\]/g, (match, content) => {
+    deTaggedLyrics = deTaggedLyrics.replace(/\[([^\]]+)\]/g, (match: string, content: string) => {
         let lines = content.split('/');
         const isEpenthesis = lines[0] === "";
         
