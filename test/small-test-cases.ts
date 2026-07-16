@@ -77,7 +77,7 @@ export const smallTestCases: TestCase[] = [
         text: "Ó Deus todo-poderoso",
         model: "Oração tom solene",
         parameters: { separator: ".", addOptionalEnd: true },
-        expectedInclude: ["<c><sp>R/</sp>.</c> A(g) mém.(gh) (::)"]
+        expectedInclude: ["<c><sp>R/</sp>.</c> A(g)mém.(gh) (::)"]
     },
     {
         id: "add-optional-end-false",
@@ -85,7 +85,7 @@ export const smallTestCases: TestCase[] = [
         text: "Ó Deus todo-poderoso",
         model: "Oração tom solene",
         parameters: { separator: ".", addOptionalEnd: false },
-        expectedExclude: ["A(g) mém.(gh)"]
+        expectedExclude: ["A(g)mém.(gh)"]
     },
     {
         id: "remove-numbers-true",
@@ -310,5 +310,104 @@ export const smallTestCases: TestCase[] = [
         model: "Oração tom solene",
         parameters: { separator: ".", autoStack: true },
         expectedInclude: ["\\stacktext{ne}{ne-}", "\\stacktext{}{dic-}</v>}(hr)", "\\stacktext{}{tus}</v>}(hr)"]
+    },
+    // Custom macros tests
+    {
+        id: "macro-redv",
+        description: "Macro \\redv expande para V/ em tags <c><sp>",
+        text: "<v>\\redv</v> Dominus",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<sp>V/</sp>"]
+    },
+    {
+        id: "macro-redcross",
+        description: "Macro \\redcross expande para +",
+        text: "<v>\\redcross</v> Dominus",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<c>+</c>"]
+    },
+    {
+        id: "macro-ramem-bencao",
+        description: "Macro \\ramem expande para R/ Amém em bencao",
+        text: "<v>\\ramem</v>",
+        model: "Bênção tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<c><sp>R/</sp>.</c> A(g)mém.(gh) (::Z)"]
+    },
+    {
+        id: "macro-ramem-oracao",
+        description: "Macro \\ramem em oração: apenas Amém sem R/",
+        text: "<v>\\ramem</v>",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["A(g)mém"],
+        expectedExclude: ["R/"]
+    },
+    {
+        id: "macro-ramem-prefacio",
+        description: "Macro \\ramem em prefácio: apenas Amém sem R/",
+        text: "<v>\\ramem</v>",
+        model: "Prefácio tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["A(g)mém"],
+        expectedExclude: ["R/"]
+    },
+    {
+        id: "macro-rubric-simple",
+        description: "Macro \\rubric{texto} expande para alt tag",
+        text: "<v>\\rubric{Alt.}</v> O Senhor",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<alt>Alt.</alt>"]
+    },
+    {
+        id: "macro-rubric-multiword",
+        description: "Macro \\rubric com múltiplas palavras",
+        text: "<v>\\rubric{Versículo do Senhor}</v>",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<alt>Versículo do Senhor</alt>"]
+    },
+    {
+        id: "macro-nome",
+        description: "Macro \\nome expande para N. com nota",
+        text: "<v>\\nome</v> Dominus",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<c>N.</c>(hrhrhr)"]
+    },
+    {
+        id: "macro-nome-in-context",
+        description: "Macro \\nome dentro de um contexto textual",
+        text: "Dominus <v>\\nome</v> meus",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<c>N.</c>(hrhrhr)"]
+    },
+    {
+        id: "macro-multiple-redv",
+        description: "Múltiplas instâncias de \\redv",
+        text: "<v>\\redv</v> Dominus <v>\\redv</v> Deus",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<sp>V/</sp>"]
+    },
+    {
+        id: "macro-mixed-macros",
+        description: "Combinação de diferentes macros",
+        text: "<v>\\redv</v> Dominus. <v>\\redcross</v>",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<sp>V/</sp>", "<c>+</c>"]
+    },
+    {
+        id: "macro-nome-default-note",
+        description: "Macro \\nome com nota padrão h quando nenhuma nota precede",
+        text: "<v>\\nome</v> Dominus",
+        model: "Oração tom solene",
+        parameters: { separator: "." },
+        expectedInclude: ["<c>N.</c>(hrhrhr)"]
     }
 ];

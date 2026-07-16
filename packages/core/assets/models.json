@@ -3,7 +3,7 @@
         "name": "Oração tom solene",
         "type": "oracao",
         "tom": "solene",
-        "optionalEnd": "<c><sp>R/</sp>.</c> A(g) mém.(gh) (::)",
+        "optionalEnd": "<c><sp>R/</sp>.</c> A(g)mém.(gh) (::)",
         "optionalStart": "(c4) <c><sp>V/</sp>.</c>() O(h)re(gh)mos.(h) (::)",
         "start": "(c4) <c><sp>V/</sp>.</c>() ",
         "default": "(g) (hr hr hr) (g) (g) (hr1) (hr) (h) (::)",
@@ -192,8 +192,35 @@
             "E a bênção de Deus todo-poderoso, Pai e Filho e Espírito Santo, desça sobre vós e permaneça para sempre."
         ],
         "replace": [
-            "<c><sp>R/</sp>.</c> A(g) mém.(gh) (::Z)",
+            "<c><sp>R/</sp>.</c> A(g)mém.(gh) (::Z)",
             "E(g) a(h) bên(h)ção(h) de(h) Deus(h) to(h)do-(h)po(h)de(h)ro(h)so,(g) (;) Pai(gh) e(h) Filh(h)o(h) e(h) Es(h)pí(h)ri(h)to(h) San(i)to,(h) (,) des(h)ça(h) so(h)bre(h) vós(h) e(h) per(h)ma(h)ne(h)ça(h) pa(g)ra(h) sem(hg)pre.(g) (::)"
+        ]
+    },
+    {
+        "name": "Bênção tom simples",
+        "type": "bencao",
+        "tom": "simples",
+        "optionalEnd": "<c><sp>R/</sp>.</c> A(h) mém.(h) (::)",
+        "optionalStart": "(c3) <c><sp>V/</sp>.</c>() O(h) re(h) mos:(f) (::)",
+        "start": "(c3) <c><sp>V/</sp>.</c>() ",
+        "default": "(h) (hr hr hr) (hr1) (fr) (f) (:)",
+        "patterns": [
+            {
+                "symbol": "*",
+                "gabc": "(h) (hr hr hr) (g) (f) (hr1) (hr) (h) (;)"
+            },
+            {
+                "symbol": "+",
+                "gabc": "(h) (hr hr hr) (hr1) (fr) (f) (,)"
+            }
+        ],
+        "find": [
+            "Amém.",
+            "E a bênção de Deus todo-poderoso, Pai e Filho e Espírito Santo, desça sobre vós e permaneça para sempre."
+        ],
+        "replace": [
+            "<c><sp>R/</sp>.</c> A(h)mém.(h) (::Z)",
+            "E(h) a(h) bên(h)ção(h) de(h) Deus(h) to(h)do-(h)po(h)de(h)ro(h)so,(g) (;) Pai(gh) e(h) Filh(h)o(h) e(h) Es(h)pí(h)ri(h)to(h) San(i)to,(h) (,) des(h)ça(h) so(h)bre(h) vós(h) e(h) per(h)ma(h)ne(h)ça(h) pa(g)ra(h) sem(hg)pre.(g) (::)"
         ]
     },
     {

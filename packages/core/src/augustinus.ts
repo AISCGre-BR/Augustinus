@@ -3,12 +3,47 @@ import { preprocessInput, handleCustomModel } from "./core/parameters.js";
 import { applyModel } from "./modules/apply-model.js";
 import defaultModels from '../assets/models.json' with { type: 'json' };
 
+function expandMacrosEarly(text: string): string {
+    // ponytail: wrap in sp tags; process NOME separately to avoid period separator issue
+    return text.replace(/<v>([\s\S]*?)<\/v>/g, (match, content) => {
+        let expanded = content
+            .replace(/\\redv/g, '<sp>REDV</sp>')
+            .replace(/\\ramem/g, 'Amém.')
+            .replace(/\\redcross/g, '<sp>REDCROSS</sp>')
+            .replace(/\\rubric\{([^}]*)\}/g, '<sp>RUBRIC{$1}</sp>')
+            .replace(/\\nome/g, '<sp>NOMEX</sp>');
+        return expanded;
+    });
+}
+
+function convertMacroMarkers(text: string): string {
+    return text
+        .replace(/<sp>REDV<\/sp>/g, '<c><sp>V\/<\/sp>.<\/c>')
+        .replace(/<sp>RAMEM<\/sp>/g, '<c><sp>R\/<\/sp>.<\/c> A(g)mém.(gh) (::Z)')
+        .replace(/<sp>REDCROSS<\/sp>/g, '<c>+<\/c>')
+        .replace(/<sp>RUBRIC\{([^}]*)\}<\/sp>/g, '<alt>$1<\/alt>');
+}
+
 export default function generateGabc(input: string, modelObject: Model, partialParameters: Partial<Parameters> = {}): string {
     const parametersObject = { ...getDefaultParameters(), ...partialParameters };
     let model = handleCustomModel(modelObject, parametersObject);
     let psalm = model.type === "salmo" ? true : false;
 
+    input = expandMacrosEarly(input);
     input = preprocessInput(input, parametersObject);
+
+    // Track NOMEX positions and their preceding notes before extraction
+    const nomeNoteMap: Map<string, string> = new Map();
+    let nomeIndex = 0;
+    input = input.replace(/<sp>NOMEX<\/sp>/g, (match, offset) => {
+        const before = input.substring(0, offset);
+        const lastNoteMatch = before.match(/\(([a-n])/);
+        const note = lastNoteMatch ? lastNoteMatch[1] : 'h';
+        const marker = `<sp>NOMEX${nomeIndex}</sp>`;
+        nomeNoteMap.set(marker, note);
+        nomeIndex++;
+        return marker;
+    });
 
     const specialTags: string[] = [];
     input = input.replaceAll(/(<(sp|v|alt)\b[^>]*>[\s\S]*?<\/\2>)/gi, (match) => {
@@ -31,6 +66,9 @@ export default function generateGabc(input: string, modelObject: Model, partialP
     if (model.type === "prefacio" && model.tom === "solene") {
         input = input.replaceAll("Por isso,", "Por isso," + DELIM);
     }
+    if (model.type === "bencao" && model.tom === "solene") {
+        input = input.replaceAll("Amém.", "Amém." + DELIM);
+    }
 
     const chunks: string[] = input.split(DELIM).map(s => s.trim()).filter(chunk => {
         if (!chunk || chunk === parametersObject.separator) return false;
@@ -45,11 +83,28 @@ export default function generateGabc(input: string, modelObject: Model, partialP
     for (let chunk of chunks) {
         chunk = chunk.replace(/__SPECIAL_TAG_PLACEHOLDER_(\d+)__/g, (match, indexStr) => {
             const idx = parseInt(indexStr, 10);
-            return specialTags[idx] || "";
+            let tag = specialTags[idx] || "";
+            // Convert macro markers - wrap in <sp> tags to protect from note insertion
+            if (tag.includes('REDV')) tag = '<sp><c><sp>V\/<\/sp>.<\/c><\/sp>';
+            else if (tag.includes('REDCROSS')) tag = '<sp><c>+<\/c><\/sp>';
+            else if (tag.match(/<sp>RUBRIC\{([^}]*)\}<\/sp>/)) tag = tag.replace(/<sp>RUBRIC\{([^}]*)\}<\/sp>/g, '<sp><alt>$1<\/alt><\/sp>');
+            else if (tag.includes('NOMEX')) {
+                for (const [marker, note] of nomeNoteMap.entries()) {
+                    if (tag === marker) {
+                        tag = `<sp><c>N.<\/c>(${note}r${note}r${note}r)<\/sp>`;
+                        break;
+                    }
+                }
+            }
+            return tag;
         });
 
         if (model.type === "prefacio" && model.tom === "solene" && chunk == "Por isso,") {
             gabcLines.push("Por(f) is(ef)so,(f) (,) ");
+            continue
+        }
+        if (model.type === "bencao" && model.tom === "solene" && chunk == "Amém.") {
+            gabcLines.push("<c><sp>R/</sp>.</c> A(g)mém.(gh) (::Z)");
             continue
         }
         let findIndex = model.find.indexOf(chunk + parametersObject.separator)
@@ -67,7 +122,9 @@ export default function generateGabc(input: string, modelObject: Model, partialP
         const pattern = model.patterns.find(p => p.symbol === lastChar);
         if (pattern) {
             const text = model.type === 'leitura' ? chunk.trim() : chunk.slice(0, -1).trim();
-            gabcLines.push(applyModel(text, pattern.gabc, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs, parametersObject.autoStack))
+            if (text) {
+                gabcLines.push(applyModel(text, pattern.gabc, psalm, parametersObject.doElision, parametersObject.curlyDiphthongs, parametersObject.autoStack))
+            }
         } else {
             const trimmedChunk = chunk.trim();
             const needsSeparator = parametersObject.removeSeparator === false && !/[.,;:!?]/.test(trimmedChunk.slice(-1));
@@ -170,8 +227,78 @@ export default function generateGabc(input: string, modelObject: Model, partialP
         resultGabc = resultGabc.replaceAll("</sp>.()", "</sp>.");
         resultGabc = resultGabc.replaceAll("</sp>()", "</sp>");
     }
-    
+
+    // Strip outer <sp> protection tags added for macros
+    resultGabc = resultGabc.replace(/<sp>(<c>[\s\S]*?<\/c>[\s\S]*?(?:(?=<\/sp>)|(?=\s*$)))<\/sp>/g, '$1');
+    resultGabc = resultGabc.replace(/<sp>(<alt>.*?<\/alt>)<\/sp>/g, '$1');
+
     return resultGabc;
+}
+
+export function reverseGabc(gabc: string, model?: Model, options?: {separator?: string}): string {
+    const lines = gabc.split("\n");
+    const result: string[] = [];
+
+    // Extract pattern ending codes: the last (...) in each pattern's gabc
+    const patternEndings = new Map<string, string>();
+    if (model && model.patterns) {
+        for (const pattern of model.patterns) {
+            const match = pattern.gabc.match(/\([^)]*\)(?=\s*$)/);
+            if (match) {
+                patternEndings.set(match[0], pattern.symbol);
+            }
+        }
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        const isFinalMarkedLine = line.includes("(::)");
+
+        // Extract content from LaTeX stacktext commands
+        line = line.replaceAll(/\\stacktext(\{[^}]*\})+/g, (match) => {
+            const contents = match.match(/\{([^}]*)\}/g) || [];
+            return contents.map(b => b.slice(1, -1)).filter(s => s).join("/");
+        });
+
+        // Try to match and identify which pattern was used by its ending
+        let patternSymbol = "";
+        if (patternEndings.size > 0) {
+            for (const [ending, symbol] of patternEndings) {
+                if (line.endsWith(ending)) {
+                    patternSymbol = symbol;
+                    break;
+                }
+            }
+        }
+
+        // Remove GABC notation in parentheses
+        line = line.replaceAll(/\([^)]*\)/g, "");
+
+        // Remove HTML/XML tags but preserve tag content
+        line = line.replaceAll(/<[^>]*>/g, "");
+
+        // Clean up spaces first
+        line = line.replaceAll(/\s+/g, " ").trim();
+
+        // Remove verse markers (V/, R/, etc.) at start
+        line = line.replace(/^(V|R|Alt)\/\.\s*/, "");
+
+        // Remove trailing separator only if it was auto-added (original text didn't end with punctuation)
+        // Only for final lines with no pattern symbol, and NOT for ** separator (used in prefacio/bencao solene)
+        if (!patternSymbol && isFinalMarkedLine && options?.separator && options.separator !== '**' && line.endsWith(options.separator)) {
+            const withoutSep = line.slice(0, -options.separator.length);
+            // Only remove if there's no punctuation before the separator
+            if (!withoutSep.match(/[.,;:!?]$/)) {
+                line = withoutSep.trim();
+            }
+        }
+
+        if (line) {
+            result.push(line + patternSymbol);
+        }
+    }
+
+    return result.join("").replaceAll(/\s+/g, " ").trim();
 }
 
 export { defaultModels };

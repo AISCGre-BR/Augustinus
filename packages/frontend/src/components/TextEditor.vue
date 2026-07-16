@@ -49,9 +49,18 @@
       <div v-show="activeTab === 'gabc'" class="editor-pane">
         <div class="editor-actions">
           <label for="gabc">GABC</label>
-          <button class="action-link-btn copy-btn" @click="copyGabc" title="Copiar código GABC">
-            {{ copyLabel }}
-          </button>
+          <div class="action-buttons-group">
+            <button class="action-link-btn copy-btn" @click="copyGabc" title="Copiar código GABC">
+              {{ copyLabel }}
+            </button>
+            <button
+              class="action-link-btn reverse-btn"
+              @click="reverseGabcToLyrics"
+              title="[Experimental] Converter GABC de volta para letra"
+            >
+              ⚡ Reverter
+            </button>
+          </div>
         </div>
         <textarea
           id="gabc"
@@ -83,11 +92,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { reverseGabc } from '@augustinus/core';
+import type { Model } from '@augustinus/core';
 
 const props = defineProps<{
   header: string;
   inputText: string;
   gabcOutput: string;
+  selectedModel?: Model | null;
 }>();
 
 const emit = defineEmits<{
@@ -112,6 +124,27 @@ async function copyGabc() {
     }, 1500);
   } catch (err) {
     console.error('Erro ao copiar o código GABC:', err);
+  }
+}
+
+function reverseGabcToLyrics() {
+  if (!props.gabcOutput) return;
+
+  try {
+    const model = props.selectedModel;
+
+    // Determine which separator was used based on model type
+    // This matches the logic in App.vue for generateGabc
+    const separator = model?.type === 'prefacio' ? '**' : '.';
+
+    // Pass options with the correct separator for proper handling
+    const reversed = reverseGabc(props.gabcOutput, model || undefined, { separator });
+
+    emit('update:inputText', reversed);
+    activeTab.value = 'lyrics';
+  } catch (err) {
+    console.error('Erro ao reverter GABC:', err);
+    alert('Erro ao converter GABC de volta para letra. Verifique o código GABC.');
   }
 }
 </script>
@@ -192,6 +225,20 @@ async function copyGabc() {
 .action-link-btn:hover {
   background-color: rgba(200, 90, 50, 0.1);
   color: #e27c52;
+}
+
+.action-buttons-group {
+  display: flex;
+  gap: 8px;
+}
+
+.reverse-btn {
+  opacity: 0.7;
+  font-size: 11px;
+}
+
+.reverse-btn:hover {
+  opacity: 1;
 }
 
 textarea {

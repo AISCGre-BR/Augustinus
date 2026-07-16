@@ -21,6 +21,7 @@
           v-model:inputText="inputText"
           v-model:gabcOutput="gabcOutput"
           v-model:header="header"
+          :selectedModel="selectedModel"
           @update:gabcOutput="onGabcInput"
         />
         <!-- Structured Options Config Panel -->
