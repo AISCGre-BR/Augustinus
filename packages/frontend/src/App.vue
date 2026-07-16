@@ -128,7 +128,7 @@ function updateCustomFields() {
 
   // Prefácios usam "**" como marcador de cadência final (para não confundir com a
   // pontuação); os demais modelos usam o separador padrão ".".
-  parameters.separator = model.type === 'prefacio' ? '**' : '.';
+  parameters.separator = (model.type === 'prefacio' || model.type === 'bencao') ? '**' : '.';
 }
 
 function gabcToSvg(gabc: string) {

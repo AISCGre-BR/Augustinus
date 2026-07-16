@@ -66,7 +66,7 @@ export default function generateGabc(input: string, modelObject: Model, partialP
     if (model.type === "prefacio" && model.tom === "solene") {
         input = input.replaceAll("Por isso,", "Por isso," + DELIM);
     }
-    if (model.type === "bencao" && model.tom === "solene") {
+    if (model.type === "bencao") {
         input = input.replaceAll("Amém.", "Amém." + DELIM);
     }
 
@@ -105,6 +105,10 @@ export default function generateGabc(input: string, modelObject: Model, partialP
         }
         if (model.type === "bencao" && model.tom === "solene" && chunk == "Amém.") {
             gabcLines.push("<c><sp>R/</sp>.</c> A(g)mém.(gh) (::Z)");
+            continue
+        }
+        if (model.type === "bencao" && model.tom === "simples" && chunk == "Amém.") {
+            gabcLines.push("<c><sp>R/</sp>.</c> A(h)mém.(h) (::Z)");
             continue
         }
         let findIndex = model.find.indexOf(chunk + parametersObject.separator)
