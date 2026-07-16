@@ -152,9 +152,17 @@ export default function generateGabc(input: string, modelObject: Model, partialP
     if (parametersObject.header) {
         resultGabc = parametersObject.header + "\n%%\n" + resultGabc;
     }
-    // TODO: Evaluate if this experimental feature should be kept or refactored into a more robust system
+    // Quilismatic scandicus: ornament the tonic syllable of the final
+    // acclamation verb with a quilismatic scandicus (f–g[quilisma]–h, GABC
+    // "fgwh"), replacing its single reciting note (g). Covers the common
+    // cadence formulas: "cantando ..." (tonic "tan") and "cantamos ..."
+    // (tonic "ta"), regardless of what follows ("a uma só voz", "sem cessar",
+    // "em alegre celebração a uma só voz", etc.). Scoped with `[^\n]*\(::\)$`
+    // to the closing cadence line, so the same words appearing in the preface
+    // body (which end in "(:)") are never touched.
     if (parametersObject.quelisma) {
-        resultGabc = resultGabc.replaceAll(/can\(g\)tan\(g\)do\(g\) a\(g\) u\(fe\)ma\(ef\) só\(g\) voz:?\.?\(fgf\)\s*\(::\)/g, "can(g)tan(fgwh)do(g) a(g) u(fe)ma(ef) só(g) voz:(fgf) (::)")
+        resultGabc = resultGabc.replace(/(can\(g\)tan)\(g\)(do\([^)]*\)[^\n]*\(::\))\s*$/, "$1(fgwh)$2");
+        resultGabc = resultGabc.replace(/(can\(g\)ta)\(g\)(mos\([^)]*\)[^\n]*\(::\))\s*$/, "$1(fgwh)$2");
     }
 
     if (parametersObject.includeBarredVParenthesis === false) {
