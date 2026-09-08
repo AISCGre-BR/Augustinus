@@ -39,9 +39,32 @@ Augustinus uses a metadata-driven parameter system defined in `src/types/index.t
 The frontend is a modern **Vue 3** application using the **Composition API**.
 
 -   **Framework**: Vue 3 + Vite + TypeScript.
--   **Main Component**: `src/App.vue` manages the state and layout.
--   **Rendering**: Uses `@testneumz/nabc-lib` (Gregorio-based) to render GABC into SVG in real-time.
--   **Dynamic UI**: The options grid is generated at runtime based on the `parameterDefinitions` exported by the core.
+-   **Routing**: One page per chant type, addressed by hash (`#/prefacios`). Implemented in
+    `src/router.ts` (no `vue-router`) because the site is served statically from GitHub Pages,
+    where path routing would 404 on refresh.
+-   **Rendering**: Uses `@testneumz/nabc-lib` (Gregorio-based) to render GABC into SVG, wrapped
+    in `src/render.ts`.
+-   **State**: `src/store.ts` holds a reactive store persisted to `localStorage`
+    (`augustinus:v1`). Lyrics, GABC and tone are kept per page; parameters, zoom and the GABC
+    header are global.
+-   **Dynamic UI**: Controls are generated at runtime from the `parameterDefinitions` exported
+    by the core, filtered by `optionApplies` so that parameters the core ignores for the chosen
+    model are not shown.
+
+### Directory Structure
+
+-   `src/chant-pages.ts`: **Single Source of Truth** for the navigation — which chant types
+    exist, which models each one offers, and which parameters it highlights.
+-   `src/router.ts`, `src/store.ts`, `src/render.ts`: routing, persistence, score rendering.
+-   `src/App.vue`: shell (header + current page).
+-   `src/components/`:
+    -   `HomePage.vue`: the chant-type cards.
+    -   `ChantPage.vue`: tone picker, essential options, lyrics, GABC and preview.
+    -   `AdvancedOptions.vue`: the collapsed drawer with the technical parameters.
+    -   `ChantPreview.vue`: A4 viewport, zoom and printing.
+-   `src/style.css`: global theme (palette, form controls, print rules).
+
+See `DETAILS.md` for the reasoning behind each of these.
 
 ---
 
@@ -70,5 +93,10 @@ Augustinus maintains high reliability through a two-tier testing system:
 To add a new parameter to Augustinus:
 1.  Add the definition to `packages/core/src/types/index.ts`.
 2.  Implement the logic in the relevant module in `packages/core/src/modules/`.
-3.  The UI will update automatically.
+3.  If it only applies to some models, add the rule to `optionApplies` in
+    `packages/frontend/src/chant-pages.ts`, and list its key in the `optionKeys` of the page
+    where it should be prominent. Otherwise it appears under "Opções avançadas" automatically.
 4.  Add a test case to `test/small-test-cases.ts` and run `bun test`.
+
+To add a new chant type, append an entry to `chantPages` in
+`packages/frontend/src/chant-pages.ts`; the home page and the route follow from it.

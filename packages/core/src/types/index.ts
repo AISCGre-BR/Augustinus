@@ -9,6 +9,10 @@ export interface Model {
     tom: string;
     optionalEnd: string;
     optionalStart: string;
+    /** Rótulo legível para o toggle "adicionar começo" (ex.: 'Incluir "Oremos"'). */
+    optionalStartLabel?: string;
+    /** Rótulo legível para o toggle "adicionar final" (ex.: 'Incluir "Amém"'). */
+    optionalEndLabel?: string;
     start: string;
     default: string;
     patterns: Pattern[];

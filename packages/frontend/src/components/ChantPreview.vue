@@ -1,273 +1,167 @@
 <template>
-  <div class="preview-panel-wrapper">
-    <!-- Floating Toolbar (Excluded from Printing) -->
-    <div class="floating-toolbar no-print">
-      <div class="toolbar-section">
-        <button class="tool-btn" @click="zoomOut" title="Reduzir Visualização">
-          <span>−</span>
-        </button>
-        <span class="zoom-text">{{ zoomValue }}%</span>
-        <button class="tool-btn" @click="zoomIn" title="Ampliar Visualização">
-          <span>+</span>
-        </button>
-        <button class="tool-btn text-btn" @click="zoomReset">100%</button>
+  <div class="preview-wrapper">
+    <div class="toolbar no-print">
+      <div class="zoom-group">
+        <button type="button" class="tool-btn" title="Reduzir" @click="zoomOut">−</button>
+        <span class="zoom-text">{{ state.zoom }}%</span>
+        <button type="button" class="tool-btn" title="Ampliar" @click="zoomIn">+</button>
+        <button type="button" class="tool-btn wide" @click="state.zoom = 100">100%</button>
       </div>
-
-      <div class="toolbar-section">
-        <button class="tool-btn text-btn print-button" @click="triggerPrint" title="Imprimir Partitura">
-          🖨️ Imprimir
-        </button>
-      </div>
+      <button type="button" class="tool-btn wide" @click="print">Imprimir</button>
     </div>
 
-    <!-- Restored Original DOM structure for layout & print output compatibility -->
     <div class="output">
-      <div 
-        class="a4-container" 
-        :class="{ 'dark-theme-paper': !lightPaper }"
-        :style="{ transform: `scale(${zoomValue / 100})` }"
-      >
+      <div class="a4-container" :style="{ transform: `scale(${state.zoom / 100})` }">
         <div ref="containerRef" class="chant-container"></div>
       </div>
     </div>
 
-    <!-- Disclaimer Section -->
-    <div class="rendering-disclaimer no-print">
-      <p>
-        <strong>Nota:</strong> O empilhamento de texto (ex: <code>[texto/outro]</code>) pode não ser renderizado corretamente nesta pré-visualização. 
-        Para um resultado profissional, utilize o código GABC gerado em conjunto com o pacote LaTeX <code>augustinus</code>.
-      </p>
-    </div>
+    <p v-if="stacking" class="disclaimer no-print">
+      Esta partitura usa empilhamento de texto (<code>[texto/outro]</code>), que pode não sair
+      correto nesta pré-visualização. Para o resultado final, use o GABC com o pacote LaTeX
+      <code>augustinus</code>.
+    </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { state } from '../store';
+
+defineProps<{
+  /** Avisa sobre o empilhamento só quando a partitura de fato o usa. */
+  stacking?: boolean;
+}>();
 
 const containerRef = ref<HTMLDivElement | null>(null);
-const zoomValue = ref<number>(100);
-const lightPaper = ref<boolean>(true);
 
-defineExpose({
-  containerRef
-});
+defineExpose({ containerRef });
 
 function zoomIn() {
-  if (zoomValue.value < 200) zoomValue.value += 10;
+  if (state.zoom < 200) state.zoom += 10;
 }
 
 function zoomOut() {
-  if (zoomValue.value > 50) zoomValue.value -= 10;
+  if (state.zoom > 50) state.zoom -= 10;
 }
 
-function zoomReset() {
-  zoomValue.value = 100;
-}
-
-function togglePaperBackground() {
-  lightPaper.value = !lightPaper.value;
-}
-
-function triggerPrint() {
+function print() {
   window.print();
 }
 </script>
 
 <style scoped>
-.preview-panel-wrapper {
+.preview-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
-/* Floating Toolbar styles */
-.floating-toolbar {
+.toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #221d1a;
-  border: 1px solid #3d312a;
-  border-radius: 8px;
-  padding: 8px 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  gap: 0.5rem;
 }
 
-.toolbar-section {
+.zoom-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.4rem;
 }
 
 .zoom-text {
-  /* font-family: 'Inter', sans-serif; */
-  font-size: 13px;
-  color: #f4ecd8;
-  min-width: 44px;
+  min-width: 3rem;
   text-align: center;
+  font-size: 0.85rem;
 }
 
 .tool-btn {
-  background-color: #312722;
-  border: 1px solid #4f3f35;
-  color: #f4ecd8;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 16px;
-  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.9rem;
+  min-width: 2rem;
 }
 
-.tool-btn.text-btn {
-  width: auto;
-  padding: 0 12px;
-  font-size: 12px;
+.tool-btn.wide {
+  font-size: 0.85rem;
 }
 
-.tool-btn:hover {
-  background-color: #c85a32;
-  border-color: #c85a32;
-  color: #fff;
-}
-
-.tool-btn.dark-mode-active {
-  background-color: #55443c;
-  border-color: #6d584f;
-}
-
-.export-row {
-  display: flex;
-  gap: 8px;
-}
-
-.action-btn {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  /* font-family: 'Inter', sans-serif; */
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: opacity 0.2s, background-color 0.2s;
-  color: #ffffff;
-}
-
-.action-btn:hover {
-  opacity: 0.9;
-}
-
-.svg-btn { background-color: #3a2f29; }
-.png-btn { background-color: #58483e; }
-.pdf-btn { background-color: #c85a32; }
-
-.rendering-disclaimer {
-  margin-top: 12px;
-  padding: 12px 16px;
-  background-color: #2d231e;
-  border-left: 4px solid #c85a32;
-  border-radius: 4px;
-}
-
-.rendering-disclaimer p {
-  margin: 0;
-  font-size: 13px;
-  color: #a3958d;
-  line-height: 1.5;
-}
-
-.rendering-disclaimer strong {
-  color: #f4ecd8;
-}
-
-.rendering-disclaimer code {
-  background-color: #1c1714;
-  padding: 2px 4px;
-  border-radius: 3px;
-  color: #c85a32;
-}
-
-/* Visualizer Viewport */
 .output {
   overflow: auto;
-  border: 1px solid #3d312a;
-  background-color: #171412;
-  border-radius: 8px;
-  padding: 32px;
+  background-color: var(--bg);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 1.5rem;
   display: flex;
   /* "safe center" centraliza a partitura quando ela cabe, mas alinha à esquerda
-     quando ela é mais larga que a área visível (telas estreitas / sidebar de 440px).
-     Com "center" simples, a borda esquerda (clave e início das linhas) transborda
-     para um scroll negativo, ficando cortada e inacessível à rolagem. */
+     quando ela é mais larga que a área visível. Com "center" simples, a borda
+     esquerda (clave e início das linhas) transborda para um scroll negativo,
+     ficando cortada e inacessível à rolagem. */
   justify-content: safe center;
   align-items: flex-start;
-  max-height: 800px;
-  min-height: 600px;
+  min-height: 500px;
 }
 
-/* Restored A4 Container with fixed physical dimensions on-screen */
 .a4-container {
-  background-color: #ffffff;
+  background: #ffffff;
+  color: #000000;
   width: 210mm;
   min-height: 297mm;
   flex-shrink: 0;
-  padding: 20mm;
-  box-sizing: border-box;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  padding: 2cm;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   transform-origin: top center;
-  transition: transform 0.2s ease, background-color 0.3s ease;
+  transition: transform 0.15s ease;
 }
 
-/* Custom dark mode override styles */
-.a4-container.dark-theme-paper {
-  background-color: #1e1916 !important;
+.chant-container {
+  width: 100%;
 }
 
-.a4-container.dark-theme-paper :deep(svg) {
-  filter: invert(0.9) sepia(0.3) hue-rotate(340deg) brightness(1.2);
+.disclaimer {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
-/* Strict Print Overrides */
+.disclaimer code {
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0 0.25rem;
+  border-radius: 3px;
+}
+
 @media print {
-  /* Hide UI features and interactive layout wrappers */
-  .no-print,
-  .floating-toolbar,
-  .export-row {
+  .no-print {
     display: none !important;
   }
 
-  /* Reset layout constraints to allow natural document flow on print */
-  .preview-panel-wrapper,
+  .preview-wrapper,
   .output {
     display: block !important;
     overflow: visible !important;
+    border: none !important;
     padding: 0 !important;
     margin: 0 !important;
-    width: auto !important;
-    height: auto !important;
+    min-height: 0 !important;
   }
 
-  /* Ensure the sheet is sized exactly to standard physical A4 margins */
   .a4-container {
-    transform: none !important; /* Disregard on-screen scaling transforms */
-    background-color: #ffffff !important; /* Enforce white background for physical paper */
+    transform: none !important;
+    background: #ffffff !important;
     box-shadow: none !important;
     margin: 0 auto !important;
-    padding: 20mm !important;
+    padding: 2cm !important;
     width: 210mm !important;
     min-height: 297mm !important;
-    page-break-inside: avoid;
+    /* Sem `page-break-inside: avoid` aqui: o papel quase sempre é mais alto que
+       uma página, então a regra nunca teria efeito — e quem precisa ficar
+       inteiro é cada linha de canto (`.chant-line`, ver style.css). */
   }
 
-  /* Prevent vector output paths from stretching outside print margin boundaries */
   .chant-container :deep(svg) {
     max-width: 100% !important;
     height: auto !important;
-    filter: none !important; /* Neutralize dark/inverted themes during print processes */
   }
 }
 </style>

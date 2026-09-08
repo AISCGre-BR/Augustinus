@@ -15,208 +15,286 @@
   src: url('../fonts/greextra.ttf') format('truetype');
 }
 
-/* New Color Palette:
-- Background: #2F2A20 (Dark Brown)
-- Primary/Controls: #4A443A (Slightly lighter brown)
-- Accent: #9B5B4D (Muted Red/Terracotta)
-- Text/Paper: #F5F0E1 (Parchment/Cream)
-- Text on dark: #F5F0E1 (Parchment/Cream)
-- Text on light: #2F2A20 (Dark Brown)
+/*
+  Paleta (retomada da linha 3.x):
+  - Fundo:            #2F2A20 (marrom escuro)
+  - Painel/controles: #4A443A (marrom um tom acima)
+  - Acento:           #9B5B4D (terracota)
+  - Papel/texto:      #F5F0E1 (pergaminho)
+  Campos de texto são claros (pergaminho com tinta escura), como antes da 4.0.
 */
 
+:root {
+  --bg: #2F2A20;
+  --panel: #4A443A;
+  --panel-line: #6a6152;
+  --accent: #9B5B4D;
+  --accent-hover: #b26c5c;
+  --paper: #F5F0E1;
+  --ink: #2F2A20;
+  --muted: #cbc3b0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   margin: 0;
-  background-color: #2F2A20;
-  color: #F5F0E1;
+  background-color: var(--bg);
+  color: var(--paper);
 }
+
+h1, h2, h3 {
+  margin: 0;
+  color: var(--paper);
+  font-weight: bold;
+}
+
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1rem; }
+
 label {
-  color: #F5F0E1;
+  color: var(--paper);
 }
+
+a {
+  color: var(--paper);
+}
+
+/* ---------- Estrutura ---------- */
+
 #app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-}
-
-h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #F5F0E1;
-}
-
-main {
-  display: flex;
-  flex: 1;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-.controls {
-  flex: 0 0 650px;
-  padding: 1rem;
-  overflow-y: auto;
-  background-color: #2F2A20;
-  border-right: 1px solid #9B5B4D;
-  box-sizing: border-box;
-}
-
-.output {
-  flex: 1 0 auto;
-  padding: 2rem;
-  overflow-y: auto;
-  background-color: #4A443A;
-}
-
-textarea {
-  width: 100%;
-  margin-bottom: 1rem;
-  border: 1px solid #9B5B4D;
-  border-radius: 4px;
-  padding: 0.5rem;
-  font-size: 1em;
-  font-family: 'EB Garamond';
-  box-sizing: border-box;
-  background-color: #F5F0E1;
-  color: #2F2A20;
-}
-
-button {
-  width: 100%;
-  padding: 0.75rem;
-  background: #9B5B4D;
-  color: #F5F0E1;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-
-button:hover {
-  background: #4A443A;
-}
-
-details {
-  border: 1px solid #9B5B4D;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-}
-
-summary {
-  cursor: pointer;
-  font-weight: bold;
-  padding: 0.75rem;
-  background: #4A443A;
-  color: #F5F0E1;
-}
-
-
-.options-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  padding: 1rem;
-}
-
-.option {
-  display: flex;
-  align-items: center;
-}
-
-.option label {
-  margin-left: 0.5rem;
-}
-
-#psalm-controls {
-  border-top: 1px solid #9B5B4D;
-  padding-top: 1rem;
-  padding-left:1rem;
-  margin-top: 1rem;
-}
-
-#psalm-controls h3 {
-  color: #F5F0E1;
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.2em;
-}
-
-#psalm-controls .option {
-  margin-bottom: 0.5rem;
-  margin-left: 0.5rem;
-}
-
-#psalm-controls #psalm-option {
-  grid-column: span 2;
-}
-
-
-#psalm-controls > div {
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.a4-container {
-  background: white;
-  width: 210mm;
-  min-height: 297mm;
-  margin: 0 auto;
-  padding: 2cm;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-#chant-container {
-  width: 100%;
-}
-
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  .a4-container, .a4-container * {
-    visibility: visible;
-  }
-  .a4-container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    box-shadow: none;
-  }
+  min-height: 100vh;
 }
 
 header {
   display: flex;
   align-items: center;
-  background: #4A443A;
-  padding: 1rem;
-  border-bottom: 1px solid #9B5B4D;
-  justify-content: space-between; /* Espalha os grupos para os cantos */
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--panel);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--accent);
+}
+
+header .left-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
 }
 
 header .logo {
-  height: 50px;
+  height: 46px;
   width: auto;
-  margin-right: 1rem;
   border-radius: 50%;
 }
 
-.left-content {
-    display: flex;
-    align-items: center;
+header .title-link {
+  text-decoration: none;
+  color: inherit;
 }
-#docs {
-  margin-left:10%;
-}
+
 #docs a {
-    color: #F5F0E1;
-    text-decoration: none;
+  color: var(--paper);
+  text-decoration: none;
+  font-size: 0.85rem;
 }
 
 #docs a:hover {
-    color: #d6d2c5;
-    text-decoration: underline;
+  text-decoration: underline;
+}
+
+main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* No desktop a janela é a moldura: a coluna de controles e a partitura rolam
+   cada uma por si. Em tela estreita tudo vira uma coluna só e quem rola é a
+   página inteira. */
+@media (min-width: 901px) {
+  #app {
+    height: 100vh;
+  }
+  main {
+    overflow: hidden;
+  }
+}
+
+/* ---------- Formulários ---------- */
+
+textarea,
+input[type="text"],
+select {
+  width: 100%;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 1em;
+  font-family: inherit;
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+textarea {
+  font-family: 'EB Garamond', Georgia, serif;
+  resize: vertical;
+}
+
+textarea:focus,
+input[type="text"]:focus,
+select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+button {
+  padding: 0.6rem 1rem;
+  background: var(--accent);
+  color: var(--paper);
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+button:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+button:disabled {
+  background: #5c5648;
+  color: #9a9384;
+  cursor: not-allowed;
+}
+
+/* Botão secundário, de texto */
+button.link-button {
+  background: none;
+  color: var(--muted);
+  padding: 0.2rem 0.4rem;
+  font-size: 0.8rem;
+  text-decoration: underline;
+}
+
+button.link-button:hover:not(:disabled) {
+  background: none;
+  color: var(--paper);
+}
+
+details {
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0.6rem 0.75rem;
+  background: var(--panel);
+  color: var(--paper);
+}
+
+fieldset {
+  border: 1px solid var(--panel-line);
+  border-radius: 4px;
+  padding: 0.6rem 0.75rem 0.75rem;
+  margin: 0;
+}
+
+legend {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 0 0.35rem;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.35rem 0;
+}
+
+.option input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.option label {
+  cursor: pointer;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0.5rem 0;
+}
+
+.field > label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem 1rem;
+}
+
+@media (max-width: 900px) {
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Cada linha de canto é um bloco próprio (ver splitIntoLines em render.ts), para
+   que a impressão nunca parta uma pauta entre duas páginas. */
+.chant-line {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Sem isto o <svg> é inline e ganha o vão da linha-base (~4px por linha),
+   afastando as pautas em relação ao espaçamento original da partitura. */
+.chant-line > svg {
+  display: block;
+}
+
+/* ---------- Impressão: só a partitura vai para o papel ---------- */
+
+@media print {
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  header,
+  .controls,
+  .home {
+    display: none !important;
+  }
+
+  #app,
+  main,
+  .chant-page {
+    display: block !important;
+    min-height: 0 !important;
+  }
+
+  .preview {
+    padding: 0 !important;
+    background: none !important;
+    overflow: visible !important;
+  }
 }
