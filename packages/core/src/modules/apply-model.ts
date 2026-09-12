@@ -90,9 +90,10 @@ export function applyModel(lyrics: string, gabcModel: string, psalm: boolean, do
             }
             const syllableArray = syllable(token).split(/(?<=@)/);
             const tonicIndex = syllableArray.length - tonic(syllableArray);
+            const isMonosyllable = syllableArray.length === 1;
             const result = syllableArray.map((s, i) => {
                 const cleanSyllable = s.replace(/[^a-zA-Z\u00C0-\u00FF]/g, "").toLowerCase();
-                const isUnstressed = unstressedMonosyllables.includes(cleanSyllable);
+                const isUnstressed =  isMonosyllable && unstressedMonosyllables.includes(cleanSyllable);
                 let processedSyllable = (i === tonicIndex && !isUnstressed) ? "#" + s : s;
                 if (curlyDiphthongs) {
                     processedSyllable = processedSyllable.replace(diphthongRegex, "{$1$2}");
