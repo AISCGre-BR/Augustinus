@@ -25,12 +25,8 @@ export function psalmLogic(input: string[], notes: string[]) { //Função que ap
                 break;
 
             default:
-                // Repetir a nota do meio (penúltima nota do sufixo) caso a tônica esteja além de 3
-                replaceAt(i - tonicIndex, tonicNote[0]);
+                replaceAt(i - 2, tonicNote[0]);
                 replaceAt(i - 1, notes[notes.length - 1]);
-                for (let j = 2; j < tonicIndex; j++) {
-                    replaceAt(i - j, notes[notes.length - 2]);
-                }
                 break;
         }
     } else { // Para o caso de não ter tônica melódica (tom Cc)
